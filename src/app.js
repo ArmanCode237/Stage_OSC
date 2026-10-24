@@ -1,18 +1,17 @@
 const SWATCH_COLORS = ['#00e5ff', '#a855f7', '#10b981', '#f59e0b', '#f43f5e', '#3b82f6', '#f8fafc'];
 
 const CC_NAMES = {
-  0: 'Bank Select', 1: 'Modulation Wheel', 2: 'Breath', 4: 'Foot Ctrl', 5: 'Portamento Time',
-  7: 'Channel Volume', 8: 'Balance', 10: 'Pan', 11: 'Expression', 64: 'Sustain Pedal',
-  65: 'Portamento On/Off', 71: 'Resonance / Timbre', 72: 'Release Time', 73: 'Attack Time',
-  74: 'Cutoff / Brightness', 91: 'Reverb Send', 93: 'Chorus Send', 120: 'All Sound Off', 123: 'All Notes Off'
+  0: 'Bank Select', 1: 'Modulation', 2: 'Breath', 4: 'Foot Ctrl', 5: 'Portamento Time',
+  7: 'Volume', 8: 'Balance', 10: 'Pan', 11: 'Expression', 64: 'Sustain',
+  65: 'Portamento', 71: 'Resonance', 72: 'Release', 73: 'Attack',
+  74: 'Cutoff', 91: 'Reverb', 93: 'Chorus', 120: 'All Sound Off', 123: 'All Notes Off'
 };
-
 const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
 function midiNoteToName(n) {
   const octave = Math.floor(n / 12) - 1;
   return `${NOTE_NAMES[n % 12]}${octave}`;
 }
-
 function uid() {
   return 'w_' + Math.random().toString(36).slice(2, 9);
 }
@@ -21,29 +20,23 @@ function createDefaultConfig() {
   return {
     network: { host: '192.168.1.50', port: 8000 },
     activeSceneId: 'scene_default',
-    scenes: [
-      {
-        id: 'scene_default',
-        name: 'Live Rig Principal',
-        activePageIndex: 0,
-        pages: [
-          {
-            id: 'page_1',
-            name: 'Página 1: Capas & Mix',
-            widgets: [
-              { id: uid(), type: 'fader', label: 'Piano Vol', x: 40, y: 40, w: 95, h: 340, color: '#00e5ff', glow: 'neon', style: 'glass', showTicks: true, showValue: true, spring: false, msgType: 'cc', channel: 1, midiNum: 7, noteBehavior: 'latch', oscAddress: '/track/1/volume', oscType: 'f', min: 0, max: 127, normValue: 0.8 },
-              { id: uid(), type: 'toggle', label: 'Piano Layer', onLabel: 'ACTIVO', offLabel: 'MUTE', x: 40, y: 395, w: 95, h: 105, color: '#00e5ff', glow: 'neon', style: 'glass', showTicks: false, showValue: false, spring: false, msgType: 'cc', channel: 1, midiNum: 20, noteBehavior: 'latch', oscAddress: '/track/1/mute', oscType: 'f', min: 0, max: 127, normValue: 1 },
-
-              { id: uid(), type: 'fader', label: 'Pad Layer', x: 155, y: 40, w: 95, h: 340, color: '#a855f7', glow: 'neon', style: 'glass', showTicks: true, showValue: true, spring: false, msgType: 'cc', channel: 1, midiNum: 11, noteBehavior: 'latch', oscAddress: '/track/2/volume', oscType: 'f', min: 0, max: 127, normValue: 0.65 },
-              { id: uid(), type: 'toggle', label: 'Pad Layer', onLabel: 'ACTIVO', offLabel: 'MUTE', x: 155, y: 395, w: 95, h: 105, color: '#a855f7', glow: 'neon', style: 'glass', showTicks: false, showValue: false, spring: false, msgType: 'cc', channel: 1, midiNum: 21, noteBehavior: 'latch', oscAddress: '/track/2/mute', oscType: 'f', min: 0, max: 127, normValue: 1 },
-
-              { id: uid(), type: 'knob', label: 'Cutoff', x: 280, y: 40, w: 145, h: 170, color: '#00e5ff', glow: 'neon', style: 'glass', showTicks: true, showValue: true, spring: false, msgType: 'cc', channel: 1, midiNum: 74, noteBehavior: 'latch', oscAddress: '/fx/1', oscType: 'f', min: 0, max: 127, normValue: 0.55 },
-              { id: uid(), type: 'knob', label: 'Resonance', x: 440, y: 40, w: 145, h: 170, color: '#a855f7', glow: 'soft', style: 'glass', showTicks: true, showValue: true, spring: false, msgType: 'cc', channel: 1, midiNum: 71, noteBehavior: 'latch', oscAddress: '/fx/2', oscType: 'f', min: 0, max: 127, normValue: 0.25 }
-            ]
-          }
+    scenes: [{
+      id: 'scene_default',
+      name: 'Live Rig Principal',
+      activePageIndex: 0,
+      pages: [{
+        id: uid(),
+        name: 'Página 1: Capas & Mix',
+        widgets: [
+          { id: uid(), type: 'fader', label: 'Piano Vol', x: 40, y: 40, w: 95, h: 340, color: '#00e5ff', glow: 'neon', style: 'glass', showTicks: true, showValue: true, spring: false, msgType: 'cc', channel: 1, midiNum: 7, noteBehavior: 'latch', oscAddress: '/track/1/volume', oscType: 'f', min: 0, max: 127, normValue: 0.8 },
+          { id: uid(), type: 'toggle', label: 'Piano Layer', onLabel: 'ACTIVO', offLabel: 'MUTE', x: 40, y: 395, w: 95, h: 105, color: '#00e5ff', glow: 'neon', style: 'glass', showTicks: false, showValue: false, spring: false, msgType: 'cc', channel: 1, midiNum: 20, noteBehavior: 'latch', oscAddress: '/track/1/mute', oscType: 'f', min: 0, max: 127, normValue: 1 },
+          { id: uid(), type: 'fader', label: 'Pad Layer', x: 155, y: 40, w: 95, h: 340, color: '#a855f7', glow: 'neon', style: 'glass', showTicks: true, showValue: true, spring: false, msgType: 'cc', channel: 1, midiNum: 11, noteBehavior: 'latch', oscAddress: '/track/2/volume', oscType: 'f', min: 0, max: 127, normValue: 0.65 },
+          { id: uid(), type: 'toggle', label: 'Pad Layer', onLabel: 'ACTIVO', offLabel: 'MUTE', x: 155, y: 395, w: 95, h: 105, color: '#a855f7', glow: 'neon', style: 'glass', showTicks: false, showValue: false, spring: false, msgType: 'cc', channel: 1, midiNum: 21, noteBehavior: 'latch', oscAddress: '/track/2/mute', oscType: 'f', min: 0, max: 127, normValue: 1 },
+          { id: uid(), type: 'knob', label: 'Cutoff', x: 280, y: 40, w: 145, h: 170, color: '#00e5ff', glow: 'neon', style: 'glass', showTicks: true, showValue: true, spring: false, msgType: 'cc', channel: 1, midiNum: 74, noteBehavior: 'latch', oscAddress: '/fx/1', oscType: 'f', min: 0, max: 127, normValue: 0.55 },
+          { id: uid(), type: 'knob', label: 'Resonance', x: 440, y: 40, w: 145, h: 170, color: '#a855f7', glow: 'soft', style: 'glass', showTicks: true, showValue: true, spring: false, msgType: 'cc', channel: 1, midiNum: 71, noteBehavior: 'latch', oscAddress: '/fx/2', oscType: 'f', min: 0, max: 127, normValue: 0.25 }
         ]
-      }
-    ]
+      }]
+    }]
   };
 }
 
@@ -54,7 +47,8 @@ const state = {
   selectedWidgetId: null,
   activePointers: new Map(),
   saveTimer: null,
-  ledTimer: null
+  ledTimer: null,
+  inspectorOpen: false
 };
 
 const $ = (id) => document.getElementById(id);
@@ -62,7 +56,6 @@ const $ = (id) => document.getElementById(id);
 function getActiveScene() {
   return state.config.scenes.find((s) => s.id === state.config.activeSceneId) || state.config.scenes[0];
 }
-
 function getActivePage() {
   const scene = getActiveScene();
   if (!scene.pages.length) {
@@ -72,25 +65,23 @@ function getActivePage() {
   scene.activePageIndex = idx;
   return scene.pages[idx];
 }
-
 function getSelectedWidget() {
   return getActivePage().widgets.find((w) => w.id === state.selectedWidgetId) || null;
 }
-
 function scheduleSave() {
   clearTimeout(state.saveTimer);
   state.saveTimer = setTimeout(() => {
     window.oscAPI.saveConfig(state.config);
-  }, 250);
+  }, 300);
 }
 
+// ===== DIÁLOGO GENÉRICO =====
 function showDialog({ title, defaultValue = '', isPrompt = true, message = '' }) {
   return new Promise((resolve) => {
     const modal = $('modal-dialog');
     const input = $('dialog-input');
     const msgEl = $('dialog-message');
     $('dialog-title').textContent = title;
-
     if (isPrompt) {
       input.classList.remove('hidden');
       msgEl.classList.add('hidden');
@@ -100,7 +91,6 @@ function showDialog({ title, defaultValue = '', isPrompt = true, message = '' })
       msgEl.classList.remove('hidden');
       msgEl.textContent = message;
     }
-
     modal.classList.remove('hidden');
     if (isPrompt) setTimeout(() => input.focus(), 40);
 
@@ -111,7 +101,6 @@ function showDialog({ title, defaultValue = '', isPrompt = true, message = '' })
       input.onkeydown = null;
       resolve(result);
     };
-
     $('dialog-ok').onclick = () => cleanup(isPrompt ? input.value.trim() : true);
     $('dialog-cancel').onclick = () => cleanup(null);
     input.onkeydown = (e) => {
@@ -121,13 +110,13 @@ function showDialog({ title, defaultValue = '', isPrompt = true, message = '' })
   });
 }
 
-// --- Ruteo MIDI / OSC ---
+// ===== MONITOR TX =====
 function flashTxMonitor(label) {
   $('tx-text').textContent = label;
   const led = $('tx-led');
   led.classList.add('active');
   clearTimeout(state.ledTimer);
-  state.ledTimer = setTimeout(() => led.classList.remove('active'), 110);
+  state.ledTimer = setTimeout(() => led.classList.remove('active'), 150);
 }
 
 function sendOscRaw(address, args, monitorLabel) {
@@ -142,6 +131,7 @@ function computeScaledInt(widget, norm = widget.normValue) {
   return Math.max(0, Math.min(limit, Math.round(raw)));
 }
 
+// ===== RUTEO MIDI / OSC =====
 function dispatchWidgetMessage(widget, phase = 'move') {
   const chIndex = Math.max(0, Math.min(15, (Number(widget.channel) || 1) - 1));
   const valInt = computeScaledInt(widget);
@@ -169,7 +159,6 @@ function dispatchWidgetMessage(widget, phase = 'move') {
       );
       return;
     }
-
     const mode = widget.noteBehavior || 'latch';
     if (mode === 'latch') {
       if (!forceSend && widget._lastSent === valInt) return;
@@ -200,7 +189,7 @@ function dispatchWidgetMessage(widget, phase = 'move') {
     } else if (mode === 'sweep') {
       if (phase === 'up') {
         if (widget._sweepNote != null) {
-          sendOscRaw(`/vkb_midi/${chIndex}/note/${widget._sweepNote}`, [{ type: 'i', value: 0 }], `Sweep OFF`);
+          sendOscRaw(`/vkb_midi/${chIndex}/note/${widget._sweepNote}`, [{ type: 'i', value: 0 }], 'Sweep OFF');
           widget._sweepNote = null;
         }
       } else if (valInt !== widget._sweepNote) {
@@ -256,7 +245,6 @@ function formatWidgetReadout(widget) {
 function updateWidgetVisuals(widget, el) {
   if (!el) el = document.querySelector(`.osc-widget[data-id="${widget.id}"]`);
   if (!el) return;
-
   const norm = Math.max(0, Math.min(1, widget.normValue || 0));
   el.style.setProperty('--w-color', widget.color || '#00e5ff');
 
@@ -297,7 +285,7 @@ function updateWidgetVisuals(widget, el) {
   }
 }
 
-// --- En buildWidgetElement: elimina el botón fijo ⚙ y deja el widget limpio ---
+// ===== BUILD WIDGET =====
 function buildWidgetElement(widget) {
   const el = document.createElement('div');
   el.className = `osc-widget style-${widget.style || 'glass'}`;
@@ -312,42 +300,37 @@ function buildWidgetElement(widget) {
 
   let bodyHtml = '';
   if (widget.type === 'fader') {
-    bodyHtml = `
-      <div class="fader-body">
-        ${widget.showTicks ? '<div class="fader-ticks"></div>' : ''}
-        <div class="fader-track">
-          <div class="fader-fill"></div>
-          <div class="fader-thumb"></div>
-        </div>
-      </div>`;
+    bodyHtml = `<div class="fader-body">
+      ${widget.showTicks ? '<div class="fader-ticks"></div>' : ''}
+      <div class="fader-track">
+        <div class="fader-fill"></div>
+        <div class="fader-thumb"></div>
+      </div>
+    </div>`;
   } else if (widget.type === 'knob') {
-    bodyHtml = `
-      <div class="knob-body">
-        <svg class="knob-svg" viewBox="0 0 100 100">
-          <circle class="knob-arc-bg" cx="50" cy="50" r="38" stroke-dasharray="179.07 238.76" transform="rotate(135 50 50)" />
-          <circle class="knob-arc-fill" cx="50" cy="50" r="38" stroke-dasharray="0 238.76" transform="rotate(135 50 50)" />
-          <circle class="knob-cap" cx="50" cy="50" r="27" />
-          <line class="knob-pointer" x1="50" y1="50" x2="50" y2="26" />
-        </svg>
-      </div>`;
+    bodyHtml = `<div class="knob-body">
+      <svg class="knob-svg" viewBox="0 0 100 100">
+        <circle class="knob-arc-bg" cx="50" cy="50" r="38" stroke-dasharray="179.07 238.76" transform="rotate(135 50 50)" />
+        <circle class="knob-arc-fill" cx="50" cy="50" r="38" stroke-dasharray="0 238.76" transform="rotate(135 50 50)" />
+        <circle class="knob-cap" cx="50" cy="50" r="27" />
+        <line class="knob-pointer" x1="50" y1="50" x2="50" y2="26" />
+      </svg>
+    </div>`;
   } else if (widget.type === 'toggle') {
-    bodyHtml = `
-      <div class="toggle-body">
-        <div class="toggle-led"></div>
-        <div class="toggle-switch-pill">
-          <div class="toggle-switch-knob"></div>
-        </div>
-        <div class="toggle-state-text">OFF</div>
-      </div>`;
+    bodyHtml = `<div class="toggle-body">
+      <div class="toggle-led"></div>
+      <div class="toggle-switch-pill"><div class="toggle-switch-knob"></div></div>
+      <div class="toggle-state-text">OFF</div>
+    </div>`;
   } else {
     bodyHtml = `<div class="pad-body"></div>`;
   }
 
-  // Ya no hay botón fijo en el widget; el acceso es por Clic Derecho en Modo Edición
+  // Botón de configuración visible en modo edición
+  const cfgBtnHtml = state.editMode ? `<div class="btn-widget-config" data-cfg="1" title="Configurar">⚙</div>` : '';
   const resizeHtml = state.editMode ? `<div class="resize-handle" data-resize="1"></div>` : '';
 
-  el.innerHTML = `${titleHtml}${bodyHtml}${badgeHtml}${resizeHtml}`;
-
+  el.innerHTML = `${titleHtml}${bodyHtml}${badgeHtml}${cfgBtnHtml}${resizeHtml}`;
   updateWidgetVisuals(widget, el);
   attachWidgetPointerEvents(el, widget);
   return el;
@@ -357,19 +340,19 @@ function snapVal(v) {
   return state.snapToGrid ? Math.round(v / 20) * 20 : Math.round(v);
 }
 
+// ===== EVENTOS DE WIDGET =====
 function attachWidgetPointerEvents(el, widget) {
   el.addEventListener('pointerdown', (e) => {
     e.stopPropagation();
     el.setPointerCapture(e.pointerId);
 
-    // Si está en modo edición, cualquier toque fuera del botón de config permite mover o redimensionar libremente el control
+    // Modo edición
     if (state.editMode) {
+      // Clic en botón de configuración
       if (e.target.dataset.cfg) {
-        state.selectedWidgetId = widget.id;
-        openWidgetConfigModal(widget);
+        openInspector(widget);
         return;
       }
-
       const isResize = Boolean(e.target.dataset.resize);
       state.activePointers.set(e.pointerId, {
         mode: isResize ? 'resize' : 'move',
@@ -382,15 +365,20 @@ function attachWidgetPointerEvents(el, widget) {
         origW: widget.w,
         origH: widget.h
       });
+      // Seleccionar widget
+      state.selectedWidgetId = widget.id;
+      document.querySelectorAll('.osc-widget').forEach(w => w.classList.remove('selected-edit'));
+      el.classList.add('selected-edit');
       return;
     }
 
-    // --- Modo Live ---
+    // Modo Live
     const session = {
       mode: 'live',
       widget,
       el,
       startY: e.clientY,
+      startX: e.clientX,
       startNorm: widget.normValue || 0
     };
     state.activePointers.set(e.pointerId, session);
@@ -426,11 +414,20 @@ function attachWidgetPointerEvents(el, widget) {
       widget.y = Math.max(0, snapVal(session.origY + (e.clientY - session.startY)));
       el.style.left = `${widget.x}px`;
       el.style.top = `${widget.y}px`;
+      // Actualizar inspector si está abierto para este widget
+      if (state.inspectorOpen && state.selectedWidgetId === widget.id) {
+        $('inp-x').value = widget.x;
+        $('inp-y').value = widget.y;
+      }
     } else if (session.mode === 'resize') {
       widget.w = Math.max(60, snapVal(session.origW + (e.clientX - session.startX)));
       widget.h = Math.max(60, snapVal(session.origH + (e.clientY - session.startY)));
       el.style.width = `${widget.w}px`;
       el.style.height = `${widget.h}px`;
+      if (state.inspectorOpen && state.selectedWidgetId === widget.id) {
+        $('inp-w').value = widget.w;
+        $('inp-h').value = widget.h;
+      }
     } else if (session.mode === 'live') {
       if (widget.type === 'fader') {
         const track = el.querySelector('.fader-track').getBoundingClientRect();
@@ -438,6 +435,8 @@ function attachWidgetPointerEvents(el, widget) {
       } else if (widget.type === 'knob') {
         const deltaY = session.startY - e.clientY;
         widget.normValue = Math.max(0, Math.min(1, session.startNorm + deltaY / 170));
+        session.startY = e.clientY;
+        session.startNorm = widget.normValue;
       } else {
         return;
       }
@@ -464,7 +463,6 @@ function attachWidgetPointerEvents(el, widget) {
       scheduleSave();
     } else {
       scheduleSave();
-      renderAll();
     }
   };
 
@@ -472,42 +470,7 @@ function attachWidgetPointerEvents(el, widget) {
   el.addEventListener('pointercancel', endTouch);
 }
 
-// --- Renderizado de Escena y Lienzo ---
-function renderAll() {
-  const scene = getActiveScene();
-  const page = getActivePage();
-
-  const sceneSel = $('scene-select');
-  sceneSel.innerHTML = state.config.scenes
-    .map((s) => `<option value="${s.id}" ${s.id === scene.id ? 'selected' : ''}>${s.name}</option>`)
-    .join('');
-
-  const tabsEl = $('page-tabs');
-  tabsEl.innerHTML = '';
-  scene.pages.forEach((p, idx) => {
-    const btn = document.createElement('button');
-    btn.className = `page-tab ${idx === scene.activePageIndex ? 'active' : ''}`;
-    btn.textContent = p.name;
-    btn.onclick = () => {
-      scene.activePageIndex = idx;
-      state.selectedWidgetId = null;
-      renderAll();
-      scheduleSave();
-    };
-    tabsEl.appendChild(btn);
-  });
-
-  $('edit-toolbar').classList.toggle('hidden', !state.editMode);
-  $('canvas-area').classList.toggle('edit-grid', state.editMode);
-  $('btn-toggle-edit').textContent = state.editMode ? 'Modo Live' : 'Editar UI';
-  $('btn-toggle-edit').classList.toggle('editing-on', state.editMode);
-
-  const canvas = $('canvas-area');
-  canvas.innerHTML = '';
-  page.widgets.forEach((w) => canvas.appendChild(buildWidgetElement(w)));
-}
-
-// --- Modal Configuración de Control (Estilo Swal Alert) ---
+// ===== INSPECTOR LATERAL =====
 function populateMidiPresetOptions(msgType, currentVal) {
   const presetSel = $('inp-midi-preset');
   const opts = [];
@@ -515,19 +478,22 @@ function populateMidiPresetOptions(msgType, currentVal) {
     if (msgType === 'note') {
       opts.push(`<option value="${i}" ${i === currentVal ? 'selected' : ''}>Nota ${i} — ${midiNoteToName(i)}</option>`);
     } else {
-      const desc = CC_NAMES[i] ? ` (${CC_NAMES[i]})` : '';
+      const desc = CC_NAMES[i] ? `(${CC_NAMES[i]})` : '';
       opts.push(`<option value="${i}" ${i === currentVal ? 'selected' : ''}>CC ${i}${desc}</option>`);
     }
   }
   presetSel.innerHTML = opts.join('');
 }
 
-function openWidgetConfigModal(widget) {
+function openInspector(widget) {
   state.selectedWidgetId = widget.id;
-  $('widget-config-title').textContent = `Configurar: ${widget.label || 'Control'}`;
+  state.inspectorOpen = true;
 
   const isToggle = widget.type === 'toggle';
   const isPad = widget.type === 'pad';
+
+  $('inspector-title').textContent = widget.label || 'Control';
+  $('inspector-subtitle').textContent = `${widget.type.toUpperCase()} · Ch ${widget.channel || 1}`;
 
   $('inp-label').value = widget.label;
   $('inp-type').value = widget.type;
@@ -547,12 +513,12 @@ function openWidgetConfigModal(widget) {
   $('inp-show-ticks').checked = Boolean(widget.showTicks);
   $('inp-show-value').checked = Boolean(widget.showValue);
   $('inp-spring').checked = Boolean(widget.spring);
-
   $('inp-x').value = widget.x;
   $('inp-y').value = widget.y;
   $('inp-w').value = widget.w;
   $('inp-h').value = widget.h;
 
+  // Visibilidad condicional
   $('group-toggle-texts').classList.toggle('hidden', !isToggle);
   $('row-show-ticks').classList.toggle('hidden', isToggle || isPad);
   $('row-spring').classList.toggle('hidden', isToggle);
@@ -571,13 +537,37 @@ function openWidgetConfigModal(widget) {
     populateMidiPresetOptions(widget.msgType, Number(widget.midiNum) || 0);
   }
 
-  $('modal-widget-config').classList.remove('hidden');
+  // Marcar widget seleccionado
+  document.querySelectorAll('.osc-widget').forEach(w => w.classList.remove('selected-edit'));
+  const widgetEl = document.querySelector(`.osc-widget[data-id="${widget.id}"]`);
+  if (widgetEl) widgetEl.classList.add('selected-edit');
+
+  $('inspector').classList.remove('hidden');
 }
 
-function bindConfigModalInputs() {
+function closeInspector() {
+  state.inspectorOpen = false;
+  state.selectedWidgetId = null;
+  $('inspector').classList.add('hidden');
+  document.querySelectorAll('.osc-widget').forEach(w => w.classList.remove('selected-edit'));
+}
+
+function updateWidgetFromInspector(field, value) {
+  const w = getSelectedWidget();
+  if (!w) return;
+  w[field] = value;
+  renderAll();
+  scheduleSave();
+  // Actualizar subtítulo
+  $('inspector-subtitle').textContent = `${w.type.toUpperCase()} · Ch ${w.channel || 1}`;
+  $('inspector-title').textContent = w.label || 'Control';
+}
+
+function bindInspectorInputs() {
   const chSel = $('inp-channel');
   chSel.innerHTML = Array.from({ length: 16 }, (_, i) => `<option value="${i + 1}">Canal ${i + 1}</option>`).join('');
 
+  // Swatches
   const swatchBox = $('color-swatches');
   swatchBox.innerHTML = '';
   SWATCH_COLORS.forEach((col) => {
@@ -595,18 +585,14 @@ function bindConfigModalInputs() {
     swatchBox.appendChild(s);
   });
 
-  const updateField = (fn) => {
+  // Listeners
+  $('inp-label').oninput = (e) => updateWidgetFromInspector('label', e.target.value);
+  $('inp-on-label').oninput = (e) => updateWidgetFromInspector('onLabel', e.target.value);
+  $('inp-off-label').oninput = (e) => updateWidgetFromInspector('offLabel', e.target.value);
+
+  $('inp-type').onchange = (e) => {
     const w = getSelectedWidget();
     if (!w) return;
-    fn(w);
-    renderAll();
-    scheduleSave();
-  };
-
-  $('inp-label').oninput = (e) => updateField((w) => (w.label = e.target.value));
-  $('inp-on-label').oninput = (e) => updateField((w) => (w.onLabel = e.target.value));
-  $('inp-off-label').oninput = (e) => updateField((w) => (w.offLabel = e.target.value));
-  $('inp-type').onchange = (e) => updateField((w) => {
     w.type = e.target.value;
     if (w.type === 'knob' && w.h > 220) { w.w = 145; w.h = 170; }
     if (w.type === 'fader' && w.h < 220) { w.w = 95; w.h = 340; }
@@ -617,45 +603,83 @@ function bindConfigModalInputs() {
       w.normValue = w.normValue > 0.5 ? 1 : 0;
       if (w.h > 200) { w.w = 115; w.h = 110; }
     }
-  });
-  $('inp-msg-type').onchange = (e) => updateField((w) => {
-    w.msgType = e.target.value;
-    if (w.msgType === 'pitch') { w.min = 0; w.max = 16383; w.normValue = 0.5; }
-    else if (w.max > 127) { w.min = 0; w.max = 127; }
-  });
-  $('inp-channel').onchange = (e) => updateField((w) => (w.channel = Number(e.target.value)));
-  $('inp-midi-num').oninput = (e) => updateField((w) => {
-    w.midiNum = Math.max(0, Math.min(127, Number(e.target.value) || 0));
-  });
-  $('inp-midi-preset').onchange = (e) => updateField((w) => {
-    w.midiNum = Number(e.target.value);
-  });
-  $('inp-note-behavior').onchange = (e) => updateField((w) => (w.noteBehavior = e.target.value));
-  $('inp-osc-address').oninput = (e) => updateField((w) => (w.oscAddress = e.target.value));
-  $('inp-osc-type').onchange = (e) => updateField((w) => (w.oscType = e.target.value));
-  $('inp-min').oninput = (e) => updateField((w) => (w.min = Number(e.target.value) || 0));
-  $('inp-max').oninput = (e) => updateField((w) => (w.max = Number(e.target.value) || 127));
-  $('inp-color').oninput = (e) => updateField((w) => (w.color = e.target.value));
-  $('inp-glow').onchange = (e) => updateField((w) => (w.glow = e.target.value));
-  $('inp-style').onchange = (e) => updateField((w) => (w.style = e.target.value));
-  $('inp-show-ticks').onchange = (e) => updateField((w) => (w.showTicks = e.target.checked));
-  $('inp-show-value').onchange = (e) => updateField((w) => (w.showValue = e.target.checked));
-  $('inp-spring').onchange = (e) => updateField((w) => (w.spring = e.target.checked));
-
-  ['x', 'y', 'w', 'h'].forEach((k) => {
-    $(`inp-${k}`).oninput = (e) => updateField((w) => (w[k] = Math.max(0, Number(e.target.value) || 0)));
-  });
-
-  $('btn-del-widget-modal').onclick = () => {
-    const page = getActivePage();
-    page.widgets = page.widgets.filter((w) => w.id !== state.selectedWidgetId);
-    state.selectedWidgetId = null;
-    $('modal-widget-config').classList.add('hidden');
+    if (w.type === 'pad') {
+      w.msgType = 'note';
+      w.noteBehavior = 'gate';
+    }
+    openInspector(w); // refrescar inspector
     renderAll();
     scheduleSave();
   };
 
-  $('btn-dup-widget-modal').onclick = () => {
+  $('inp-msg-type').onchange = (e) => {
+    const w = getSelectedWidget();
+    if (!w) return;
+    w.msgType = e.target.value;
+    if (w.msgType === 'pitch') { w.min = 0; w.max = 16383; w.normValue = 0.5; }
+    else if (w.max > 127) { w.min = 0; w.max = 127; }
+    openInspector(w);
+    renderAll();
+    scheduleSave();
+  };
+
+  $('inp-channel').onchange = (e) => updateWidgetFromInspector('channel', Number(e.target.value));
+  $('inp-midi-num').oninput = (e) => {
+    const w = getSelectedWidget();
+    if (!w) return;
+    w.midiNum = Math.max(0, Math.min(127, Number(e.target.value) || 0));
+    scheduleSave();
+  };
+  $('inp-midi-preset').onchange = (e) => {
+    const w = getSelectedWidget();
+    if (!w) return;
+    w.midiNum = Number(e.target.value);
+    $('inp-midi-num').value = w.midiNum;
+    scheduleSave();
+  };
+  $('inp-note-behavior').onchange = (e) => updateWidgetFromInspector('noteBehavior', e.target.value);
+  $('inp-osc-address').oninput = (e) => updateWidgetFromInspector('oscAddress', e.target.value);
+  $('inp-osc-type').onchange = (e) => updateWidgetFromInspector('oscType', e.target.value);
+  $('inp-min').oninput = (e) => {
+    const w = getSelectedWidget();
+    if (!w) return;
+    w.min = Number(e.target.value) || 0;
+    scheduleSave();
+  };
+  $('inp-max').oninput = (e) => {
+    const w = getSelectedWidget();
+    if (!w) return;
+    w.max = Number(e.target.value) || 127;
+    scheduleSave();
+  };
+  $('inp-color').oninput = (e) => updateWidgetFromInspector('color', e.target.value);
+  $('inp-glow').onchange = (e) => updateWidgetFromInspector('glow', e.target.value);
+  $('inp-style').onchange = (e) => updateWidgetFromInspector('style', e.target.value);
+  $('inp-show-ticks').onchange = (e) => updateWidgetFromInspector('showTicks', e.target.checked);
+  $('inp-show-value').onchange = (e) => updateWidgetFromInspector('showValue', e.target.checked);
+  $('inp-spring').onchange = (e) => updateWidgetFromInspector('spring', e.target.checked);
+
+  ['x', 'y', 'w', 'h'].forEach((k) => {
+    $(`inp-${k}`).oninput = (e) => {
+      const w = getSelectedWidget();
+      if (!w) return;
+      w[k] = Math.max(0, Number(e.target.value) || 0);
+      renderAll();
+      scheduleSave();
+    };
+  });
+
+  $('btn-del-widget').onclick = () => {
+    const w = getSelectedWidget();
+    if (!w) return;
+    const page = getActivePage();
+    page.widgets = page.widgets.filter((x) => x.id !== w.id);
+    closeInspector();
+    renderAll();
+    scheduleSave();
+  };
+
+  $('btn-dup-widget').onclick = () => {
     const w = getSelectedWidget();
     if (!w) return;
     const copy = JSON.parse(JSON.stringify(w));
@@ -663,24 +687,19 @@ function bindConfigModalInputs() {
     copy.x += 20;
     copy.y += 20;
     getActivePage().widgets.push(copy);
-    state.selectedWidgetId = copy.id;
-    $('modal-widget-config').classList.add('hidden');
     renderAll();
+    openInspector(copy);
     scheduleSave();
   };
 
-  $('btn-close-widget-modal').onclick = () => {
-    $('modal-widget-config').classList.add('hidden');
-    renderAll();
-  };
+  $('inspector-close').onclick = closeInspector;
 }
 
+// ===== CREAR WIDGET =====
 function addNewWidget(type) {
   const page = getActivePage();
   const count = page.widgets.length;
-
-  let wSize = 145;
-  let hSize = 165;
+  let wSize = 145, hSize = 165;
   if (type === 'fader') { wSize = 95; hSize = 340; }
   if (type === 'toggle') { wSize = 115; hSize = 110; }
 
@@ -718,11 +737,59 @@ function addNewWidget(type) {
     normValue: type === 'fader' ? 0.5 : 0
   };
   page.widgets.push(newW);
-  state.selectedWidgetId = newW.id;
   renderAll();
+  openInspector(newW);
   scheduleSave();
 }
 
+// ===== RENDER =====
+function renderAll() {
+  const scene = getActiveScene();
+  const page = getActivePage();
+
+  const sceneSel = $('scene-select');
+  sceneSel.innerHTML = state.config.scenes
+    .map((s) => `<option value="${s.id}" ${s.id === scene.id ? 'selected' : ''}>${s.name}</option>`)
+    .join('');
+
+  const tabsEl = $('page-tabs');
+  tabsEl.innerHTML = '';
+  scene.pages.forEach((p, idx) => {
+    const btn = document.createElement('button');
+    btn.className = `page-tab ${idx === scene.activePageIndex ? 'active' : ''}`;
+    btn.textContent = p.name;
+    btn.onclick = () => {
+      scene.activePageIndex = idx;
+      state.selectedWidgetId = null;
+      closeInspector();
+      renderAll();
+      scheduleSave();
+    };
+    tabsEl.appendChild(btn);
+  });
+
+  $('edit-toolbar').classList.toggle('hidden', !state.editMode);
+  $('canvas-area').classList.toggle('edit-grid', state.editMode);
+  $('btn-toggle-edit').textContent = state.editMode ? '✓ Modo Live' : '✎ Editar UI';
+  $('btn-toggle-edit').classList.toggle('editing-on', state.editMode);
+
+  const canvas = $('canvas-area');
+  canvas.innerHTML = '';
+  page.widgets.forEach((w) => {
+    const el = buildWidgetElement(w);
+    if (state.editMode && w.id === state.selectedWidgetId) {
+      el.classList.add('selected-edit');
+    }
+    canvas.appendChild(el);
+  });
+
+  // Si el inspector está abierto pero el widget ya no existe, cerrarlo
+  if (state.inspectorOpen && !getSelectedWidget()) {
+    closeInspector();
+  }
+}
+
+// ===== MODAL ESCENAS =====
 function renderScenesModal() {
   const list = $('scenes-list');
   list.innerHTML = '';
@@ -730,9 +797,12 @@ function renderScenesModal() {
     const row = document.createElement('div');
     row.className = `scene-item ${sc.id === state.config.activeSceneId ? 'active' : ''}`;
     row.innerHTML = `
-      <div><strong>${sc.name}</strong> <small style="color:#8a99b5">(${sc.pages.length} pág.)</small></div>
+      <div>
+        <strong>${sc.name}</strong>
+        <small style="color:#8a99b5;display:block;margin-top:2px;font-size:11px">${sc.pages.length} página(s)</small>
+      </div>
       <div class="row-gap">
-        <button class="btn-mini" data-act="load">Cargar</button>
+        <button class="btn-mini btn-accent" data-act="load">Cargar</button>
         <button class="btn-mini" data-act="rename">Renombrar</button>
         <button class="btn-mini" data-act="dup">Duplicar</button>
         <button class="btn-mini btn-danger" data-act="del">Borrar</button>
@@ -741,6 +811,7 @@ function renderScenesModal() {
     row.querySelector('[data-act="load"]').onclick = () => {
       state.config.activeSceneId = sc.id;
       state.selectedWidgetId = null;
+      closeInspector();
       renderAll();
       renderScenesModal();
       scheduleSave();
@@ -773,20 +844,23 @@ function renderScenesModal() {
   });
 }
 
+// ===== INIT =====
 async function init() {
   const saved = await window.oscAPI.loadConfig();
   state.config = saved && saved.scenes?.length ? saved : createDefaultConfig();
 
-  // --- Gestión del Menú Contextual por Clic Derecho ---
+  bindInspectorInputs();
+
+  // Cerrar menú contextual al hacer clic
   document.addEventListener('click', () => {
     $('context-menu').classList.add('hidden');
   });
 
+  // Menú contextual (clic derecho)
   document.addEventListener('contextmenu', (e) => {
     if (!state.editMode) return;
     const widgetEl = e.target.closest('.osc-widget');
     if (!widgetEl) return;
-
     e.preventDefault();
     const widgetId = widgetEl.dataset.id;
     const page = getActivePage();
@@ -794,23 +868,79 @@ async function init() {
     if (!widget) return;
 
     state.selectedWidgetId = widget.id;
-
     const menu = $('context-menu');
-    menu.style.left = `${Math.min(e.clientX, window.innerWidth - 170)}px`;
-    menu.style.top = `${Math.min(e.clientY, window.innerHeight - 80)}px`;
+    menu.style.left = `${Math.min(e.clientX, window.innerWidth - 180)}px`;
+    menu.style.top = `${Math.min(e.clientY, window.innerHeight - 120)}px`;
     menu.classList.remove('hidden');
 
     $('ctx-btn-config').onclick = () => {
       menu.classList.add('hidden');
-      openWidgetConfigModal(widget);
+      openInspector(widget);
+    };
+    $('ctx-btn-dup').onclick = () => {
+      menu.classList.add('hidden');
+      const copy = JSON.parse(JSON.stringify(widget));
+      copy.id = uid();
+      copy.x += 20;
+      copy.y += 20;
+      page.widgets.push(copy);
+      renderAll();
+      openInspector(copy);
+      scheduleSave();
+    };
+    $('ctx-btn-del').onclick = () => {
+      menu.classList.add('hidden');
+      page.widgets = page.widgets.filter((w) => w.id !== widget.id);
+      if (state.selectedWidgetId === widget.id) closeInspector();
+      renderAll();
+      scheduleSave();
     };
   });
 
-  bindConfigModalInputs();
+  // Soporte táctil: pulsación larga para abrir inspector
+  let longPressTimer = null;
+  document.addEventListener('touchstart', (e) => {
+    if (!state.editMode) return;
+    const widgetEl = e.target.closest('.osc-widget');
+    if (!widgetEl) return;
+    longPressTimer = setTimeout(() => {
+      const widgetId = widgetEl.dataset.id;
+      const widget = getActivePage().widgets.find((w) => w.id === widgetId);
+      if (widget) openInspector(widget);
+    }, 600);
+  });
+  document.addEventListener('touchend', () => clearTimeout(longPressTimer));
+  document.addEventListener('touchmove', () => clearTimeout(longPressTimer));
 
+  // Atajos de teclado
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+    if (e.key === 'Escape') {
+      closeInspector();
+      $('modal-network').classList.add('hidden');
+      $('modal-scenes').classList.add('hidden');
+      $('modal-dialog').classList.add('hidden');
+    }
+    if (e.key === 'Delete' && state.selectedWidgetId && state.editMode) {
+      const page = getActivePage();
+      page.widgets = page.widgets.filter((w) => w.id !== state.selectedWidgetId);
+      closeInspector();
+      renderAll();
+      scheduleSave();
+    }
+    if (e.key === 'e' && e.ctrlKey) {
+      e.preventDefault();
+      state.editMode = !state.editMode;
+      if (!state.editMode) closeInspector();
+      renderAll();
+    }
+  });
+
+  // Eventos UI
   $('scene-select').onchange = (e) => {
     state.config.activeSceneId = e.target.value;
     state.selectedWidgetId = null;
+    closeInspector();
     renderAll();
     scheduleSave();
   };
@@ -819,18 +949,18 @@ async function init() {
     const sc = getActiveScene();
     sc.activePageIndex = (sc.activePageIndex - 1 + sc.pages.length) % sc.pages.length;
     state.selectedWidgetId = null;
+    closeInspector();
     renderAll();
     scheduleSave();
   };
-
   $('btn-next-page').onclick = () => {
     const sc = getActiveScene();
     sc.activePageIndex = (sc.activePageIndex + 1) % sc.pages.length;
     state.selectedWidgetId = null;
+    closeInspector();
     renderAll();
     scheduleSave();
   };
-
   $('btn-add-page').onclick = async () => {
     const sc = getActiveScene();
     const defaultName = `Página ${sc.pages.length + 1}`;
@@ -839,16 +969,15 @@ async function init() {
     sc.pages.push({ id: uid(), name, widgets: [] });
     sc.activePageIndex = sc.pages.length - 1;
     state.selectedWidgetId = null;
+    closeInspector();
     renderAll();
     scheduleSave();
   };
-
   $('btn-rename-page').onclick = async () => {
     const page = getActivePage();
     const name = await showDialog({ title: 'Renombrar Página', defaultValue: page.name });
     if (name) { page.name = name; renderAll(); scheduleSave(); }
   };
-
   $('btn-dup-page').onclick = () => {
     const sc = getActiveScene();
     const copy = JSON.parse(JSON.stringify(getActivePage()));
@@ -860,7 +989,6 @@ async function init() {
     renderAll();
     scheduleSave();
   };
-
   $('btn-del-page').onclick = async () => {
     const sc = getActiveScene();
     if (sc.pages.length <= 1) return;
@@ -870,21 +998,24 @@ async function init() {
     sc.pages.splice(sc.activePageIndex, 1);
     sc.activePageIndex = Math.max(0, sc.activePageIndex - 1);
     state.selectedWidgetId = null;
+    closeInspector();
     renderAll();
     scheduleSave();
   };
 
   $('btn-toggle-edit').onclick = () => {
     state.editMode = !state.editMode;
-    if (!state.editMode) state.selectedWidgetId = null;
+    if (!state.editMode) closeInspector();
     renderAll();
   };
 
   $('chk-snap').onchange = (e) => (state.snapToGrid = e.target.checked);
+
   $('btn-add-fader').onclick = () => addNewWidget('fader');
   $('btn-add-knob').onclick = () => addNewWidget('knob');
   $('btn-add-toggle').onclick = () => addNewWidget('toggle');
   $('btn-add-pad').onclick = () => addNewWidget('pad');
+
   $('btn-fullscreen').onclick = () => window.oscAPI.toggleFullscreen();
 
   $('btn-panic').onclick = () => {
@@ -904,6 +1035,7 @@ async function init() {
     scheduleSave();
   };
 
+  // Modal red
   $('btn-net-modal').onclick = async () => {
     $('net-host').value = state.config.network.host;
     $('net-port').value = state.config.network.port;
@@ -924,6 +1056,7 @@ async function init() {
     sendOscRaw('/vkb_midi/0/cc/1', [{ type: 'i', value: 100 }], 'Test Ch1 CC1 → 100');
   };
 
+  // Modal escenas
   $('btn-scenes-modal').onclick = () => {
     renderScenesModal();
     $('modal-scenes').classList.remove('hidden');
@@ -944,11 +1077,9 @@ async function init() {
     renderScenesModal();
     scheduleSave();
   };
-
   $('btn-export-json').onclick = () => {
     window.oscAPI.exportConfig(JSON.stringify(state.config, null, 2));
   };
-
   $('btn-import-json').onclick = async () => {
     const raw = await window.oscAPI.importConfig();
     if (!raw) return;
