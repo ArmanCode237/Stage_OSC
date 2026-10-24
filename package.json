@@ -1,0 +1,40 @@
+{
+  "name": "free-osc-stage",
+  "version": "1.0.0",
+  "description": "Aplicación para dispositivos Windows touch para poder usarse como OSC remoto mediante puerto UDP",
+  "license": "ISC",
+  "author": "ArmandoG",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win",
+    "dist": "electron-builder --win"
+  },
+  "build": {
+    "appId": "com.freeosc.studio",
+    "productName": "Stage OSC",
+    "electronDist": "node_modules/electron/dist",
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    }
+  },
+  "devDependencies": {
+    "electron": "^45.0.0",
+    "electron-builder": "^26.18.0"
+  }
+}
