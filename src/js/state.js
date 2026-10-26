@@ -40,11 +40,18 @@ export function normalizeConfig(raw) {
     listenPort: Number(raw.network?.listenPort) || 9000
   };
 
-  // Por defecto mantiene 'udp' para no alterar la operación actual en Windows
   raw.midi = {
-    transport: raw.midi?.transport || 'udp', // 'udp' | 'midi' | 'both'
+    transport: raw.midi?.transport || 'udp',
     outputId: raw.midi?.outputId || '',
-    outputName: raw.midi?.outputName || ''
+    outputName: raw.midi?.outputName || '',
+    blePeripheral: Boolean(raw.midi?.blePeripheral)
+  };
+
+  raw.appearance = {
+    theme: raw.appearance?.theme || 'cyber',
+    canvasZoom: Number(raw.appearance?.canvasZoom) || 1,
+    uiScale: Number(raw.appearance?.uiScale) || 1,
+    canvasScroll: Boolean(raw.appearance?.canvasScroll)
   };
 
   raw.scenes.forEach((sc) => {

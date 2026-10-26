@@ -71,11 +71,16 @@ export function openInspector(widget) {
   state.selectedWidgetId = widget.id;
   state.inspectorOpen = true;
 
-  // Auto-cambiar el inspector de lado si el widget está justo debajo de él
+  const zoom = state.config?.appearance?.canvasZoom || 1;
+  const uiScale = state.config?.appearance?.uiScale || 1;
+  const inspMargin = 350 * uiScale;
   const canvasW = $('canvas-area').clientWidth || window.innerWidth;
-  if (!state.inspectorDockLeft && widget.x + widget.w > canvasW - 360) {
+  const screenRight = (widget.x + widget.w) * zoom;
+  const screenLeft = widget.x * zoom;
+
+  if (!state.inspectorDockLeft && screenRight > canvasW - inspMargin) {
     state.inspectorDockLeft = true;
-  } else if (state.inspectorDockLeft && widget.x < 360 && widget.x + widget.w < canvasW - 360) {
+  } else if (state.inspectorDockLeft && screenLeft < inspMargin && screenRight < canvasW - inspMargin) {
     state.inspectorDockLeft = false;
   }
   $('inspector').classList.toggle('dock-left', state.inspectorDockLeft);
@@ -163,7 +168,6 @@ export function bindInspectorInputs(widgetCallbacks, onFullRender) {
 
   $('inspector-close').onclick = closeInspector;
 
-  // Actualizaciones quirúrgicas del DOM (sin reconstruir todo el lienzo en cada tecla)
   $('inp-label').oninput = (e) => {
     const w = getSelectedWidget();
     if (!w) return;
@@ -198,14 +202,15 @@ export function bindInspectorInputs(widgetCallbacks, onFullRender) {
     if (w.type === 'fader' && w.h < 220) { w.w = 95; w.h = 340; }
     if (w.type === 'toggle') {
       w.spring = false;
-      w.onLabel = w.onLabel || 'ON';
-      w.offLabel = w.offLabel || 'OFF';
+      if (w.onLabel === undefined) w.onLabel = 'ON';
+      if (w.offLabel === undefined) w.offLabel = 'OFF';
       w.normValue = w.normValue > 0.5 ? 1 : 0;
-      if (w.h > 200) { w.w = 115; w.h = 110; }
+      if (w.h > 220) { w.w = 125; w.h = 125; }
     }
     if (w.type === 'pad') {
       w.msgType = 'note';
       w.noteBehavior = 'gate';
+      if (w.h > 220) { w.w = 145; w.h = 165; }
     }
     rerenderSingleWidget(w, widgetCallbacks);
     openInspector(w);
@@ -426,9 +431,12 @@ export function initContextMenu({ onOpenInspector, onFullRender, onAddWidgetAt }
         scheduleSave();
       };
     } else if (canvasEl) {
-      // Clic derecho en zona libre del lienzo: permite añadir control directamente ahí
-      const rect = canvasEl.getBoundingClientRect();
-      const pos = { x: Math.max(0, e.clientX - rect.left - 45), y: Math.max(0, e.clientY - rect.top - 45) };
+      const zoom = state.config?.appearance?.canvasZoom || 1;
+      const stageRect = $('canvas-stage').getBoundingClientRect();
+      const pos = {
+        x: Math.max(0, (e.clientX - stageRect.left) / zoom - 45),
+        y: Math.max(0, (e.clientY - stageRect.top) / zoom - 45)
+      };
 
       $('ctx-widget-group').classList.add('hidden');
       $('ctx-canvas-group').classList.remove('hidden');

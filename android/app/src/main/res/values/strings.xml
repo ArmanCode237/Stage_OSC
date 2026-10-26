@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Stage OSC</string>
+    <string name="title_activity_main">Stage OSC</string>
+    <string name="package_name">com.freeosc.studio</string>
+    <string name="custom_url_scheme">com.freeosc.studio</string>
+</resources>

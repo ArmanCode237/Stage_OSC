@@ -1,14 +1,13 @@
 const STORAGE_KEY = 'stage_osc_scenes_v1';
 
-export const isElectron = () => Boolean(window.oscAPI);
+const getNativeUdp = () => window.Capacitor?.Plugins?.StageOscUdp || null;
 
 export const platform = {
   sendOSC(payload) {
     if (window.oscAPI?.sendOSC) {
       window.oscAPI.sendOSC(payload);
-    } else if (window.CapacitorUDP?.send) {
-      // Gancho listo para futuro plugin UDP en Android Capacitor
-      window.CapacitorUDP.send(payload);
+    } else {
+      getNativeUdp()?.send(payload);
     }
   },
 
@@ -16,19 +15,28 @@ export const platform = {
     if (window.oscAPI?.configureRX) {
       return window.oscAPI.configureRX(opts);
     }
+    const udp = getNativeUdp();
+    if (udp) return udp.configureRX(opts);
     return { ok: false, listening: false };
   },
 
   onOSCRX(callback) {
     if (window.oscAPI?.onOSCRX) {
       window.oscAPI.onOSCRX(callback);
+    } else {
+      const udp = getNativeUdp();
+      if (udp) {
+        udp.removeAllListeners().then(() => {
+          udp.addListener('oscRx', (data) => {
+            if (data?.packets) callback(data.packets);
+          });
+        });
+      }
     }
   },
 
   async loadConfig() {
-    if (window.oscAPI?.loadConfig) {
-      return window.oscAPI.loadConfig();
-    }
+    if (window.oscAPI?.loadConfig) return window.oscAPI.loadConfig();
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       return raw ? JSON.parse(raw) : null;
@@ -38,9 +46,7 @@ export const platform = {
   },
 
   async saveConfig(data) {
-    if (window.oscAPI?.saveConfig) {
-      return window.oscAPI.saveConfig(data);
-    }
+    if (window.oscAPI?.saveConfig) return window.oscAPI.saveConfig(data);
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
       return { ok: true };
@@ -50,9 +56,7 @@ export const platform = {
   },
 
   async exportConfig(jsonStr) {
-    if (window.oscAPI?.exportConfig) {
-      return window.oscAPI.exportConfig(jsonStr);
-    }
+    if (window.oscAPI?.exportConfig) return window.oscAPI.exportConfig(jsonStr);
     const blob = new Blob([jsonStr], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -64,9 +68,7 @@ export const platform = {
   },
 
   async importConfig() {
-    if (window.oscAPI?.importConfig) {
-      return window.oscAPI.importConfig();
-    }
+    if (window.oscAPI?.importConfig) return window.oscAPI.importConfig();
     return new Promise((resolve) => {
       const inp = document.createElement('input');
       inp.type = 'file';
@@ -84,9 +86,7 @@ export const platform = {
   },
 
   async toggleFullscreen() {
-    if (window.oscAPI?.toggleFullscreen) {
-      return window.oscAPI.toggleFullscreen();
-    }
+    if (window.oscAPI?.toggleFullscreen) return window.oscAPI.toggleFullscreen();
     if (!document.fullscreenElement) {
       await document.documentElement.requestFullscreen?.();
       return true;
@@ -96,9 +96,12 @@ export const platform = {
   },
 
   async getLocalIPs() {
-    if (window.oscAPI?.getLocalIPs) {
-      return window.oscAPI.getLocalIPs();
+    if (window.oscAPI?.getLocalIPs) return window.oscAPI.getLocalIPs();
+    const udp = getNativeUdp();
+    if (udp) {
+      const res = await udp.getLocalIPs();
+      return res?.ips || [];
     }
-    return ['Modo Móvil / Web (Sin inspección de adaptadores locales)'];
+    return ['Modo Web'];
   }
 };

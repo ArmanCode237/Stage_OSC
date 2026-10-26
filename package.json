@@ -8,7 +8,9 @@
   "scripts": {
     "start": "electron .",
     "build": "electron-builder --win",
-    "dist": "electron-builder --win"
+    "dist": "electron-builder --win",
+    "android:sync": "npx cap sync android",
+    "android:open": "npx cap open android"
   },
   "build": {
     "appId": "com.freeosc.studio",
@@ -20,6 +22,7 @@
       "src/**/*"
     ],
     "win": {
+      "icon": "src/assets/icon.png",
       "target": [
         {
           "target": "nsis",

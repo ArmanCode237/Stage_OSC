@@ -12,10 +12,15 @@ import {
   showDialog, openInspector, closeInspector,
   syncInspectorGeometry, bindInspectorInputs, initContextMenu
 } from './inspector.js';
+import {
+  applyAppearance, updateStageBounds, stepCanvasZoom,
+  openAppearanceModal, bindAppearanceEvents
+} from './appearance.js';
 
 const widgetCallbacks = {
   onOpenInspector: (w) => openInspector(w),
-  onGeometryChange: (w) => syncInspectorGeometry(w)
+  onGeometryChange: (w) => syncInspectorGeometry(w),
+  onDragEnd: () => updateStageBounds()
 };
 
 function setZenMode(enabled) {
@@ -58,11 +63,13 @@ function renderAll() {
   $('btn-toggle-edit').textContent = state.editMode ? '✓ Live' : '✎ Editar';
   $('btn-toggle-edit').classList.toggle('editing-on', state.editMode);
 
-  const canvas = $('canvas-area');
-  canvas.innerHTML = '';
+  const stage = $('canvas-stage');
+  stage.innerHTML = '';
   page.widgets.forEach((w) => {
-    canvas.appendChild(buildWidgetElement(w, widgetCallbacks));
+    stage.appendChild(buildWidgetElement(w, widgetCallbacks));
   });
+
+  updateStageBounds();
 
   if (state.inspectorOpen && !getSelectedWidget()) {
     closeInspector();
@@ -87,7 +94,7 @@ function renderScenesModal() {
     row.innerHTML = `
       <div>
         <strong>${sc.name}</strong>
-        <small style="color:#8a99b5;display:block;margin-top:2px;font-size:11px">${sc.pages.length} página(s)</small>
+        <small style="color:var(--muted);display:block;margin-top:2px;font-size:11px">${sc.pages.length} página(s)</small>
       </div>
       <div class="row-gap">
         <button class="btn-mini btn-accent" data-act="load">Cargar</button>
@@ -164,6 +171,8 @@ async function init() {
   const saved = await platform.loadConfig();
   state.config = normalizeConfig(saved);
 
+  applyAppearance();
+  bindAppearanceEvents();
   bindInspectorInputs(widgetCallbacks, renderAll);
   bindNetworkEvents(handleIncomingOscPackets);
   bindMidiModalEvents((msg) => flashTxMonitor(msg, false));
@@ -175,7 +184,6 @@ async function init() {
 
   await applyRxConfiguration();
 
-  // Inicializar Web MIDI silenciosamente solo si el usuario ya había activado salida MIDI/Híbrida
   if (state.config.midi.transport !== 'udp') {
     await initWebMidi();
   }
@@ -188,7 +196,7 @@ async function init() {
   });
 
   $('canvas-area').addEventListener('pointerdown', (e) => {
-    if (e.target.id === 'canvas-area' && state.editMode) {
+    if ((e.target.id === 'canvas-area' || e.target.id === 'canvas-stage') && state.editMode) {
       state.selectedWidgetId = null;
       document.querySelectorAll('.osc-widget').forEach((w) => w.classList.remove('selected-edit'));
     }
@@ -203,6 +211,10 @@ async function init() {
     $('system-dropdown').classList.add('hidden');
     renderScenesModal();
     $('modal-scenes').classList.remove('hidden');
+  };
+  $('menu-appearance').onclick = () => {
+    $('system-dropdown').classList.add('hidden');
+    openAppearanceModal();
   };
   $('menu-network').onclick = () => {
     $('system-dropdown').classList.add('hidden');
@@ -229,6 +241,7 @@ async function init() {
       if (state.zenMode) setZenMode(false);
       closeInspector();
       $('system-dropdown').classList.add('hidden');
+      $('modal-appearance').classList.add('hidden');
       $('modal-network').classList.add('hidden');
       $('modal-midi').classList.add('hidden');
       $('modal-scenes').classList.add('hidden');
@@ -248,6 +261,20 @@ async function init() {
       state.editMode = !state.editMode;
       if (!state.editMode) closeInspector();
       renderAll();
+    }
+    if (e.ctrlKey && (e.key === '+' || e.key === '=')) {
+      e.preventDefault();
+      stepCanvasZoom(0.05);
+    }
+    if (e.ctrlKey && e.key === '-') {
+      e.preventDefault();
+      stepCanvasZoom(-0.05);
+    }
+    if (e.ctrlKey && e.key === '0') {
+      e.preventDefault();
+      state.config.appearance.canvasZoom = 1;
+      applyAppearance();
+      scheduleSave();
     }
     if (e.key === 'F11') {
       e.preventDefault();
@@ -374,6 +401,7 @@ async function init() {
       const parsed = JSON.parse(raw);
       if (parsed.scenes && Array.isArray(parsed.scenes)) {
         state.config = normalizeConfig(parsed);
+        applyAppearance();
         await applyRxConfiguration();
         if (state.config.midi.transport !== 'udp') await initWebMidi();
         renderAll();

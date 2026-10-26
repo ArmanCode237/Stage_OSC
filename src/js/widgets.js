@@ -1,15 +1,19 @@
 import { SWATCH_COLORS, uid } from './constants.js';
-import { state, $, scheduleSave } from './state.js';
+import { state, scheduleSave } from './state.js';
 import { formatWidgetReadout, dispatchWidgetMessage } from './midiRouter.js';
 
 export function snapVal(v) {
   return state.snapToGrid ? Math.round(v / 20) * 20 : Math.round(v);
 }
 
+function getCanvasZoom() {
+  return state.config?.appearance?.canvasZoom || 1;
+}
+
 export function createWidgetData(type, count, pos = null) {
   let wSize = 145, hSize = 165;
   if (type === 'fader') { wSize = 95; hSize = 340; }
-  if (type === 'toggle') { wSize = 115; hSize = 110; }
+  if (type === 'toggle') { wSize = 125; hSize = 125; }
 
   const defaultLabels = {
     fader: `Fader ${count + 1}`,
@@ -77,12 +81,15 @@ export function updateWidgetVisuals(widget, el = null) {
       pointer.setAttribute('transform', `rotate(${angle} 50 50)`);
     }
   } else if (widget.type === 'toggle') {
+    // Misma apariencia tipo Pad con indicador opcional de estado ON/OFF
     const isOn = norm > 0.5;
-    const toggleBody = el.querySelector('.toggle-body');
-    const stateText = el.querySelector('.toggle-state-text');
-    if (toggleBody) toggleBody.classList.toggle('active', isOn);
+    const padBody = el.querySelector('.pad-body');
+    const stateText = el.querySelector('.pad-state-text');
+    if (padBody) padBody.classList.toggle('active', isOn);
     if (stateText) {
-      stateText.textContent = isOn ? (widget.onLabel || 'ON') : (widget.offLabel || 'OFF');
+      const onTxt = widget.onLabel !== undefined ? widget.onLabel : 'ON';
+      const offTxt = widget.offLabel !== undefined ? widget.offLabel : 'OFF';
+      stateText.textContent = isOn ? onTxt : offTxt;
     }
   } else if (widget.type === 'pad') {
     const padBody = el.querySelector('.pad-body');
@@ -124,10 +131,8 @@ export function buildWidgetElement(widget, callbacks = {}) {
       </svg>
     </div>`;
   } else if (widget.type === 'toggle') {
-    bodyHtml = `<div class="toggle-body">
-      <div class="toggle-led"></div>
-      <div class="toggle-switch-pill"><div class="toggle-switch-knob"></div></div>
-      <div class="toggle-state-text">OFF</div>
+    bodyHtml = `<div class="pad-body toggle-pad">
+      <span class="pad-state-text"></span>
     </div>`;
   } else {
     bodyHtml = `<div class="pad-body"></div>`;
@@ -151,7 +156,7 @@ export function rerenderSingleWidget(widget, callbacks = {}) {
 
 function attachWidgetPointerEvents(el, widget, callbacks) {
   el.addEventListener('pointerdown', (e) => {
-    if (e.button === 2) return; // Ignorar clic derecho para dejar actuar al menú contextual
+    if (e.button === 2) return;
     e.stopPropagation();
     el.setPointerCapture(e.pointerId);
 
@@ -175,7 +180,6 @@ function attachWidgetPointerEvents(el, widget, callbacks) {
         longPressTimer: null
       };
 
-      // Pulsación larga en pantalla táctil (se cancela automáticamente si arrastras > 8px)
       if (e.pointerType === 'touch' && !isResize) {
         session.longPressTimer = setTimeout(() => {
           state.activePointers.delete(e.pointerId);
@@ -195,7 +199,6 @@ function attachWidgetPointerEvents(el, widget, callbacks) {
       return;
     }
 
-    // --- Modo Live (Cachea rectángulo una sola vez para cero reflows en pointermove) ---
     const trackEl = widget.type === 'fader' ? el.querySelector('.fader-track') : null;
     const trackRect = trackEl ? trackEl.getBoundingClientRect() : null;
 
@@ -242,15 +245,17 @@ function attachWidgetPointerEvents(el, widget, callbacks) {
       }
     }
 
+    const zoom = getCanvasZoom();
+
     if (session.mode === 'move') {
-      widget.x = Math.max(0, snapVal(session.origX + (e.clientX - session.startX)));
-      widget.y = Math.max(0, snapVal(session.origY + (e.clientY - session.startY)));
+      widget.x = Math.max(0, snapVal(session.origX + (e.clientX - session.startX) / zoom));
+      widget.y = Math.max(0, snapVal(session.origY + (e.clientY - session.startY) / zoom));
       el.style.left = `${widget.x}px`;
       el.style.top = `${widget.y}px`;
       callbacks.onGeometryChange?.(widget);
     } else if (session.mode === 'resize') {
-      widget.w = Math.max(60, snapVal(session.origW + (e.clientX - session.startX)));
-      widget.h = Math.max(60, snapVal(session.origH + (e.clientY - session.startY)));
+      widget.w = Math.max(60, snapVal(session.origW + (e.clientX - session.startX) / zoom));
+      widget.h = Math.max(60, snapVal(session.origH + (e.clientY - session.startY) / zoom));
       el.style.width = `${widget.w}px`;
       el.style.height = `${widget.h}px`;
       callbacks.onGeometryChange?.(widget);
@@ -259,7 +264,8 @@ function attachWidgetPointerEvents(el, widget, callbacks) {
         widget.normValue = Math.max(0, Math.min(1, 1 - (e.clientY - session.trackRect.top) / session.trackRect.height));
       } else if (widget.type === 'knob') {
         const deltaY = session.startY - e.clientY;
-        widget.normValue = Math.max(0, Math.min(1, session.startNorm + deltaY / 170));
+        const throwScale = Math.max(0.65, Math.min(1.35, zoom));
+        widget.normValue = Math.max(0, Math.min(1, session.startNorm + deltaY / (170 * throwScale)));
         session.startY = e.clientY;
         session.startNorm = widget.normValue;
       } else {
@@ -287,6 +293,7 @@ function attachWidgetPointerEvents(el, widget, callbacks) {
         }
       }
     }
+    callbacks.onDragEnd?.();
     scheduleSave();
   };
 
