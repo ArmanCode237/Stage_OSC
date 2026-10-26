@@ -1,304 +1,370 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>Stage OSC — Control Pro</title>
-<link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Stage OSC — Control Pro</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-<!-- ===== BARRA SUPERIOR ===== -->
-<div id="topbar">
-  <div class="topbar-left">
-    <div class="brand">STAGE<span>OSC</span></div>
-    <div id="tx-monitor">
-      <div id="tx-led"></div>
-      <span id="tx-text">Listo</span>
+  <!-- Botón flotante discreto cuando el Modo Inmersivo está activo -->
+  <button id="btn-exit-zen" class="zen-restore-pill hidden" title="Mostrar barra superior (Esc)">
+    ▾ Barra
+  </button>
+
+  <!-- ===== BARRA SUPERIOR MINIMALISTA ===== -->
+  <header id="topbar">
+    <div class="topbar-left">
+      <div class="brand">STAGE<span>OSC</span></div>
+      <button id="tx-monitor" class="tx-pill hover-bright" title="Clic para configurar IP / Puerto OSC">
+        <span id="tx-led"></span>
+        <span id="tx-text">Listo</span>
+      </button>
     </div>
-    <button id="btn-panic" class="btn-top btn-danger hover-lift" title="All Notes Off">⚠ Panic</button>
-  </div>
 
-  <div class="topbar-pages">
-    <button id="btn-prev-page" class="btn-page-nav hover-bright">◀</button>
-    <div id="page-tabs"></div>
-    <button id="btn-next-page" class="btn-page-nav hover-bright">▶</button>
-    <button id="btn-add-page" class="btn-page-add hover-bright" title="Nueva página">＋</button>
-  </div>
+    <!-- Navegación limpia de páginas (sin botones de edición estorbando en vivo) -->
+    <nav class="topbar-pages">
+      <button id="btn-prev-page" class="btn-page-nav hover-bright" title="Página anterior">◀</button>
+      <div id="page-tabs"></div>
+      <button id="btn-next-page" class="btn-page-nav hover-bright" title="Página siguiente">▶</button>
+    </nav>
 
-  <div class="topbar-right">
-    <select id="scene-select" class="hover-bright"></select>
-    <button id="btn-scenes-modal" class="btn-top hover-lift" title="Gestor de escenas">🎬 Escenas</button>
-    <button id="btn-net-modal" class="btn-top hover-lift" title="Configuración de red">🌐 IP</button>
-    <button id="btn-fullscreen" class="btn-top hover-lift" title="Pantalla completa">⛶</button>
-    <button id="btn-toggle-edit" class="btn-top btn-accent hover-lift">Editar UI</button>
-  </div>
-</div>
+    <div class="topbar-right">
+      <select id="scene-select" class="scene-pill hover-bright" title="Escena activa"></select>
+      <button id="btn-panic" class="btn-top btn-danger hover-lift" title="Apagar todas las notas MIDI (All Notes Off)">⚠ Panic</button>
+      <button id="btn-toggle-edit" class="btn-top btn-accent hover-lift" title="Alternar edición (Ctrl+E)">✎ Editar</button>
 
-<!-- ===== BARRA DE EDICIÓN ===== -->
-<div id="edit-toolbar" class="hidden">
-  <div class="toolbar-group">
-    <span class="toolbar-label">Añadir:</span>
-    <button id="btn-add-fader" class="btn-tool hover-bright">🎚 Fader</button>
-    <button id="btn-add-knob" class="btn-tool hover-bright">🎛 Knob</button>
-    <button id="btn-add-toggle" class="btn-tool hover-bright">⏻ Toggle</button>
-    <button id="btn-add-pad" class="btn-tool hover-bright">▣ Pad</button>
-  </div>
-  <div class="toolbar-group">
-    <span class="toolbar-label">Página:</span>
-    <button id="btn-rename-page" class="btn-tool hover-bright">✏ Renombrar</button>
-    <button id="btn-dup-page" class="btn-tool hover-bright">⎘ Duplicar</button>
-    <button id="btn-del-page" class="btn-tool btn-danger-soft hover-bright">🗑 Borrar</button>
-  </div>
-  <div class="toolbar-group">
-    <label class="snap-toggle">
-      <input type="checkbox" id="chk-snap" checked />
-      <span>Imán (20px)</span>
-    </label>
-  </div>
-</div>
-
-<!-- ===== ÁREA DE TRABAJO ===== -->
-<div id="workspace">
-  <div id="canvas-area"></div>
-
-  <!-- ===== INSPECTOR LATERAL (NUEVO) ===== -->
-  <aside id="inspector" class="hidden">
-    <div class="inspector-header">
-      <div>
-        <div class="inspector-title" id="inspector-title">Control</div>
-        <div class="inspector-subtitle" id="inspector-subtitle">Fader · Ch 1</div>
+      <!-- Menú desplegable unificado para mantener limpia la barra -->
+      <div class="sys-menu-wrap">
+        <button id="btn-system-menu" class="btn-top btn-icon-only hover-bright" title="Menú del sistema">☰</button>
+          <div id="system-dropdown" class="sys-dropdown hidden">
+          <button id="menu-scenes" class="sys-item"><span class="ctx-icon">🎬</span>Gestor de Escenas</button>
+          <button id="menu-network" class="sys-item"><span class="ctx-icon">🌐</span>Red e IP OSC</button>
+          <button id="menu-midi" class="sys-item"><span class="ctx-icon">🎹</span>MIDI USB / Bluetooth</button>
+          <div class="sys-divider"></div>
+          <button id="menu-zen" class="sys-item"><span class="ctx-icon">👁</span>Modo Escenario (Ocultar barra)</button>
+          <button id="menu-fullscreen" class="sys-item"><span class="ctx-icon">⛶</span>Pantalla Completa</button>
+        </div>
       </div>
-      <button id="inspector-close" class="icon-btn hover-bright" title="Cerrar">✕</button>
+    </div>
+  </header>
+
+  <!-- ===== BARRA DE EDICIÓN (Visible solo en Modo Edición) ===== -->
+  <div id="edit-toolbar" class="hidden">
+    <div class="toolbar-group">
+      <span class="toolbar-label">Añadir:</span>
+      <button id="btn-add-fader" class="btn-tool hover-bright">🎚 Fader</button>
+      <button id="btn-add-knob" class="btn-tool hover-bright">🎛 Knob</button>
+      <button id="btn-add-toggle" class="btn-tool hover-bright">⏻ Toggle</button>
+      <button id="btn-add-pad" class="btn-tool hover-bright">▣ Pad</button>
     </div>
 
-    <div class="inspector-body">
-      <!-- GENERAL -->
-      <section class="insp-section">
-        <h4>🏷 General</h4>
-        <label>
-          <span>Etiqueta</span>
-          <input type="text" id="inp-label" placeholder="Nombre del control" />
-        </label>
-        <label>
-          <span>Tipo de elemento</span>
-          <select id="inp-type">
-            <option value="fader">Fader Vertical</option>
-            <option value="knob">Knob Rotativo</option>
-            <option value="toggle">Botón Toggle</option>
-            <option value="pad">Botón / Pad</option>
-          </select>
-        </label>
-        <div id="group-toggle-texts" class="row-2col hidden">
-          <label>
-            <span>Texto ON</span>
-            <input type="text" id="inp-on-label" />
-          </label>
-          <label>
-            <span>Texto OFF</span>
-            <input type="text" id="inp-off-label" />
-          </label>
-        </div>
-      </section>
-
-      <!-- MENSAJE MIDI/OSC -->
-      <section class="insp-section">
-        <h4>📡 Mensaje MIDI / OSC</h4>
-        <label>
-          <span>Tipo de mensaje</span>
-          <select id="inp-msg-type">
-            <option value="cc">MIDI CC (0–127)</option>
-            <option value="note">Nota MIDI (0–127)</option>
-            <option value="program">Program Change (0–127)</option>
-            <option value="pitch">Pitch Bend (0–16383)</option>
-            <option value="osc">Ruta OSC personalizada</option>
-          </select>
-        </label>
-
-        <div id="group-midi-ch">
-          <label>
-            <span>Canal MIDI</span>
-            <select id="inp-channel"></select>
-          </label>
-        </div>
-
-        <div id="group-midi-num">
-          <label>
-            <span id="lbl-midi-num">Número CC (0–127)</span>
-            <input type="number" id="inp-midi-num" min="0" max="127" />
-          </label>
-          <label>
-            <span>Preset rápido</span>
-            <select id="inp-midi-preset"></select>
-          </label>
-        </div>
-
-        <div id="group-note-mode">
-          <label>
-            <span>Comportamiento de nota</span>
-            <select id="inp-note-behavior">
-              <option value="latch">Continuo / Latch</option>
-              <option value="gate">Gate táctil (Note Off al soltar)</option>
-              <option value="sweep">Barrido / Glissando</option>
-            </select>
-          </label>
-        </div>
-
-        <div id="group-osc-path" class="hidden">
-          <label>
-            <span>Ruta OSC</span>
-            <input type="text" id="inp-osc-address" placeholder="/track/1/volume" />
-          </label>
-          <label>
-            <span>Formato de dato</span>
-            <select id="inp-osc-type">
-              <option value="f">Decimal (Float 0.0 – 1.0)</option>
-              <option value="i">Entero (Mín – Máx)</option>
-            </select>
-          </label>
-        </div>
-
-        <div class="row-2col">
-          <label>
-            <span id="lbl-min-val">Valor Mín</span>
-            <input type="number" id="inp-min" />
-          </label>
-          <label>
-            <span id="lbl-max-val">Valor Máx</span>
-            <input type="number" id="inp-max" />
-          </label>
-        </div>
-      </section>
-
-      <!-- APARIENCIA -->
-      <section class="insp-section">
-        <h4>🎨 Color y efectos</h4>
-        <div class="color-row">
-          <input type="color" id="inp-color" value="#00e5ff" />
-          <div id="color-swatches"></div>
-        </div>
-        <div class="row-2col">
-          <label>
-            <span>Efecto luminoso</span>
-            <select id="inp-glow">
-              <option value="none">Sin brillo</option>
-              <option value="soft">Brillo suave</option>
-              <option value="neon">Neón intenso</option>
-            </select>
-          </label>
-          <label>
-            <span>Estilo de superficie</span>
-            <select id="inp-style">
-              <option value="glass">Cristal (Glass)</option>
-              <option value="solid">Sólido mate</option>
-              <option value="outline">Borde resaltado</option>
-              <option value="minimal">Minimalista</option>
-            </select>
-          </label>
-        </div>
-        <div class="checks-col">
-          <label class="check-row" id="row-show-ticks">
-            <input type="checkbox" id="inp-show-ticks" />
-            <span>Escala graduada</span>
-          </label>
-          <label class="check-row">
-            <input type="checkbox" id="inp-show-value" />
-            <span>Indicador numérico</span>
-          </label>
-          <label class="check-row" id="row-spring">
-            <input type="checkbox" id="inp-spring" />
-            <span>Retorno automático</span>
-          </label>
-        </div>
-      </section>
-
-      <!-- POSICIÓN Y TAMAÑO -->
-      <section class="insp-section">
-        <h4>📐 Posición y tamaño</h4>
-        <div class="row-4col">
-          <label><span>X</span><input type="number" id="inp-x" /></label>
-          <label><span>Y</span><input type="number" id="inp-y" /></label>
-          <label><span>Ancho</span><input type="number" id="inp-w" /></label>
-          <label><span>Alto</span><input type="number" id="inp-h" /></label>
-        </div>
-      </section>
-    </div>
-
-    <div class="inspector-footer">
-      <button id="btn-dup-widget" class="btn-top hover-lift">⎘ Duplicar</button>
-      <button id="btn-del-widget" class="btn-top btn-danger hover-lift">🗑 Eliminar</button>
-    </div>
-  </aside>
-</div>
-
-<!-- ===== MODAL DIÁLOGO GENÉRICO ===== -->
-<div id="modal-dialog" class="modal-backdrop hidden">
-  <div class="modal-card">
-    <h3 id="dialog-title">Título</h3>
-    <p id="dialog-message" class="hidden"></p>
-    <input type="text" id="dialog-input" class="hidden" />
-    <div class="modal-footer">
-      <button id="dialog-cancel" class="btn-top hover-bright">Cancelar</button>
-      <button id="dialog-ok" class="btn-top btn-accent hover-lift">Aceptar</button>
+    <div class="toolbar-group">
+      <span class="toolbar-label">Páginas:</span>
+      <button id="btn-add-page" class="btn-tool btn-tool-accent hover-bright">＋ Nueva</button>
+      <button id="btn-rename-page" class="btn-tool hover-bright">✏ Renombrar</button>
+      <button id="btn-dup-page" class="btn-tool hover-bright">⎘ Duplicar</button>
+      <button id="btn-del-page" class="btn-tool btn-danger-soft hover-bright">🗑 Borrar</button>
+      <label class="snap-toggle">
+        <input type="checkbox" id="chk-snap" checked />
+        <span>Imán 20px</span>
+      </label>
     </div>
   </div>
-</div>
 
-<!-- ===== MODAL RED ===== -->
-<div id="modal-network" class="modal-backdrop hidden">
-  <div class="modal-card">
-    <div class="modal-header-flex">
-      <h3>🌐 Conexión OSC por IP</h3>
-      <button class="icon-btn hover-bright" onclick="document.getElementById('modal-network').classList.add('hidden')">✕</button>
-    </div>
-    <label>
-      <span>IP del equipo destino (REAPER / DAW)</span>
-      <input type="text" id="net-host" placeholder="192.168.1.50" />
-    </label>
-    <label>
-      <span>Puerto OSC</span>
-      <input type="number" id="net-port" placeholder="8000" />
-    </label>
-    <div class="insp-section" style="background:rgba(0,229,255,0.05);border-color:rgba(0,229,255,0.25)">
-      <h4>IPs detectadas en este equipo</h4>
-      <div id="local-ips-list" style="font-family:Consolas,monospace;font-size:12px;color:#8a99b5">Detectando...</div>
-    </div>
-    <div class="modal-footer">
-      <button id="btn-test-osc" class="btn-top hover-lift">📤 Enviar prueba (CC 1 → 100)</button>
-      <div class="row-gap">
-        <button id="btn-close-net" class="btn-top hover-bright">Cancelar</button>
-        <button id="btn-save-net" class="btn-top btn-accent hover-lift">Guardar</button>
+  <!-- ===== ÁREA DE TRABAJO (100% Lienzo sin compresión) ===== -->
+  <main id="workspace">
+    <div id="canvas-area"></div>
+
+    <!-- ===== INSPECTOR FLOTANTE CONMUTABLE (IZQ ⇄ DER) ===== -->
+    <aside id="inspector" class="floating-inspector hidden">
+      <div class="inspector-header">
+        <div>
+          <div class="inspector-title" id="inspector-title">Control</div>
+          <div class="inspector-subtitle" id="inspector-subtitle">FADER · CH 1</div>
+        </div>
+        <div class="row-gap">
+          <button id="btn-inspector-side" class="icon-btn hover-bright" title="Cambiar panel de lado (Izquierda / Derecha)">⇄</button>
+          <button id="inspector-close" class="icon-btn hover-bright" title="Cerrar (Esc)">✕</button>
+        </div>
+      </div>
+
+      <div class="inspector-body">
+        <section class="insp-section">
+          <h4>🏷 General</h4>
+          <label>
+            <span>Etiqueta</span>
+            <input type="text" id="inp-label" maxlength="26" placeholder="Nombre del control" />
+          </label>
+          <label>
+            <span>Tipo de elemento</span>
+            <select id="inp-type">
+              <option value="fader">Fader Vertical</option>
+              <option value="knob">Knob Rotativo</option>
+              <option value="toggle">Botón Toggle</option>
+              <option value="pad">Botón / Pad</option>
+            </select>
+          </label>
+          <div id="group-toggle-texts" class="row-2col hidden">
+            <label><span>Texto ON</span><input type="text" id="inp-on-label" maxlength="12" /></label>
+            <label><span>Texto OFF</span><input type="text" id="inp-off-label" maxlength="12" /></label>
+          </div>
+        </section>
+
+        <section class="insp-section">
+          <h4>📡 Mensaje MIDI / OSC</h4>
+          <label>
+            <span>Tipo de mensaje</span>
+            <select id="inp-msg-type">
+              <option value="cc">MIDI CC (0–127)</option>
+              <option value="note">Nota MIDI (0–127)</option>
+              <option value="program">Program Change (0–127)</option>
+              <option value="pitch">Pitch Bend (0–16383)</option>
+              <option value="osc">Ruta OSC personalizada</option>
+            </select>
+          </label>
+
+          <div id="group-midi-ch">
+            <label>
+              <span>Canal MIDI</span>
+              <select id="inp-channel"></select>
+            </label>
+          </div>
+
+          <div id="group-midi-num">
+            <label>
+              <span id="lbl-midi-num">Número CC (0–127)</span>
+              <div class="dual-input">
+                <input type="number" id="inp-midi-num" min="0" max="127" />
+                <select id="inp-midi-preset"></select>
+              </div>
+            </label>
+          </div>
+
+          <div id="group-note-mode">
+            <label>
+              <span>Comportamiento de nota</span>
+              <select id="inp-note-behavior">
+                <option value="latch">Continuo / Latch</option>
+                <option value="gate">Gate táctil (Note Off al soltar)</option>
+                <option value="sweep">Barrido / Glissando</option>
+              </select>
+            </label>
+          </div>
+
+          <div id="group-osc-path" class="hidden">
+            <label>
+              <span>Ruta OSC</span>
+              <input type="text" id="inp-osc-address" placeholder="/track/1/volume" />
+            </label>
+            <label>
+              <span>Formato de dato</span>
+              <select id="inp-osc-type">
+                <option value="f">Decimal (Float 0.0 – 1.0)</option>
+                <option value="i">Entero (Mín – Máx)</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="row-2col">
+            <label><span id="lbl-min-val">Valor Mín</span><input type="number" id="inp-min" /></label>
+            <label><span id="lbl-max-val">Valor Máx</span><input type="number" id="inp-max" /></label>
+          </div>
+        </section>
+
+        <section class="insp-section">
+          <h4>🎨 Color y efectos</h4>
+          <div class="color-row">
+            <input type="color" id="inp-color" value="#00e5ff" />
+            <div id="color-swatches"></div>
+          </div>
+          <div class="row-2col">
+            <label>
+              <span>Efecto luminoso</span>
+              <select id="inp-glow">
+                <option value="none">Sin brillo</option>
+                <option value="soft">Brillo suave</option>
+                <option value="neon">Neón intenso</option>
+              </select>
+            </label>
+            <label>
+              <span>Estilo de superficie</span>
+              <select id="inp-style">
+                <option value="glass">Cristal (Glass)</option>
+                <option value="solid">Sólido mate</option>
+                <option value="outline">Borde resaltado</option>
+                <option value="minimal">Minimalista</option>
+              </select>
+            </label>
+          </div>
+          <div class="checks-col">
+            <label class="check-row" id="row-show-ticks">
+              <input type="checkbox" id="inp-show-ticks" />
+              <span>Escala graduada</span>
+            </label>
+            <label class="check-row">
+              <input type="checkbox" id="inp-show-value" />
+              <span>Indicador numérico</span>
+            </label>
+            <label class="check-row" id="row-spring">
+              <input type="checkbox" id="inp-spring" />
+              <span>Retorno automático</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="insp-section">
+          <h4>📐 Posición y tamaño</h4>
+          <div class="row-4col">
+            <label><span>X</span><input type="number" id="inp-x" /></label>
+            <label><span>Y</span><input type="number" id="inp-y" /></label>
+            <label><span>Ancho</span><input type="number" id="inp-w" min="60" /></label>
+            <label><span>Alto</span><input type="number" id="inp-h" min="60" /></label>
+          </div>
+        </section>
+      </div>
+
+      <div class="inspector-footer">
+        <button id="btn-dup-widget" class="btn-top hover-lift">⎘ Duplicar</button>
+        <button id="btn-del-widget" class="btn-top btn-danger hover-lift">🗑 Eliminar</button>
+      </div>
+    </aside>
+  </main>
+
+  <!-- ===== MODAL DIÁLOGO GENÉRICO ===== -->
+  <div id="modal-dialog" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <h3 id="dialog-title">Título</h3>
+      <p id="dialog-message" class="hidden"></p>
+      <input type="text" id="dialog-input" class="hidden" />
+      <div class="modal-footer">
+        <button id="dialog-cancel" class="btn-top hover-bright">Cancelar</button>
+        <button id="dialog-ok" class="btn-top btn-accent hover-lift">Aceptar</button>
       </div>
     </div>
   </div>
-</div>
 
-<!-- ===== MODAL ESCENAS ===== -->
-<div id="modal-scenes" class="modal-backdrop hidden">
-  <div class="modal-card modal-wide">
-    <div class="modal-header-flex">
-      <h3>🎬 Gestor de Escenas</h3>
-      <button class="icon-btn hover-bright" onclick="document.getElementById('modal-scenes').classList.add('hidden')">✕</button>
-    </div>
-    <div id="scenes-list" class="scenes-list"></div>
-    <div class="modal-footer">
-      <div class="row-gap">
-        <button id="btn-new-scene" class="btn-top btn-accent hover-lift">＋ Nueva escena</button>
-        <button id="btn-import-json" class="btn-top hover-bright">📥 Importar JSON</button>
-        <button id="btn-export-json" class="btn-top hover-bright">📤 Exportar backup</button>
+  <!-- ===== MODAL RED E IP ===== -->
+  <div id="modal-network" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header-flex">
+        <h3>🌐 Conexión OSC por IP</h3>
+        <button id="btn-x-net" class="icon-btn hover-bright">✕</button>
       </div>
-      <button id="btn-close-scenes" class="btn-top hover-bright">Cerrar</button>
+
+      <div class="row-2col">
+        <label class="modal-label">
+          <span>IP destino (REAPER)</span>
+          <input type="text" id="net-host" placeholder="192.168.1.50" />
+        </label>
+        <label class="modal-label">
+          <span>Puerto envío (REAPER)</span>
+          <input type="number" id="net-port" placeholder="8000" />
+        </label>
+      </div>
+
+      <div class="insp-section">
+        <h4>🔄 Feedback Bidireccional (Opcional)</h4>
+        <label class="check-row">
+          <input type="checkbox" id="net-rx-enabled" />
+          <span>Escuchar retorno OSC desde REAPER</span>
+        </label>
+        <label>
+          <span>Puerto local de escucha en este equipo</span>
+          <input type="number" id="net-listen-port" placeholder="9000" />
+        </label>
+      </div>
+
+      <div class="insp-section net-ips-box">
+        <h4>IPs detectadas en este equipo</h4>
+        <div id="local-ips-list">Detectando...</div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="btn-test-osc" class="btn-top hover-lift">📤 Prueba (CC 1)</button>
+        <div class="row-gap">
+          <button id="btn-close-net" class="btn-top hover-bright">Cancelar</button>
+          <button id="btn-save-net" class="btn-top btn-accent hover-lift">Guardar</button>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- ===== MENÚ CONTEXTUAL ===== -->
-<div id="context-menu" class="context-menu hidden">
-  <button class="ctx-item" id="ctx-btn-config"><span class="ctx-icon">⚙</span>Configurar</button>
-  <button class="ctx-item" id="ctx-btn-dup"><span class="ctx-icon">⎘</span>Duplicar</button>
-  <button class="ctx-item ctx-danger" id="ctx-btn-del"><span class="ctx-icon">🗑</span>Eliminar</button>
-</div>
+  <!-- ===== MODAL MIDI DIRECTO (USB-C / BLUETOOTH) ===== -->
+  <div id="modal-midi" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header-flex">
+        <h3>🎹 Salida MIDI Directa (USB / BT)</h3>
+        <button id="btn-x-midi" class="icon-btn hover-bright">✕</button>
+      </div>
 
-<script src="app.js"></script>
+      <label class="modal-label">
+        <span>Modo de transporte para controles MIDI</span>
+        <select id="midi-transport-mode">
+          <option value="udp">Solo Red IP (OSC hacia REAPER — Por defecto)</option>
+          <option value="midi">Solo Puerto MIDI Directo (USB-C / Bluetooth)</option>
+          <option value="both">Simultáneo (Red IP OSC + Puerto MIDI Directo)</option>
+        </select>
+      </label>
+
+      <div class="insp-section">
+        <div class="modal-header-flex">
+          <h4>Puerto de salida detectado</h4>
+          <button id="btn-refresh-midi" class="btn-mini hover-bright">↻ Buscar</button>
+        </div>
+        <select id="midi-output-select"></select>
+        <div id="midi-hw-status" style="font-size:11.5px;color:#8a99b5;margin-top:4px">
+          Verificando puertos...
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="btn-test-midi" class="btn-top hover-lift">🎹 Prueba MIDI (CC 1)</button>
+        <div class="row-gap">
+          <button id="btn-close-midi" class="btn-top hover-bright">Cancelar</button>
+          <button id="btn-save-midi" class="btn-top btn-accent hover-lift">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODAL ESCENAS ===== -->
+  <div id="modal-scenes" class="modal-backdrop hidden">
+    <div class="modal-card modal-wide">
+      <div class="modal-header-flex">
+        <h3>🎬 Gestor de Escenas</h3>
+        <button id="btn-x-scenes" class="icon-btn hover-bright">✕</button>
+      </div>
+      <div id="scenes-list" class="scenes-list"></div>
+      <div class="modal-footer">
+        <div class="row-gap">
+          <button id="btn-new-scene" class="btn-top btn-accent hover-lift">＋ Nueva escena</button>
+          <button id="btn-import-json" class="btn-top hover-bright">📥 Importar JSON</button>
+          <button id="btn-export-json" class="btn-top hover-bright">📤 Exportar backup</button>
+        </div>
+        <button id="btn-close-scenes" class="btn-top hover-bright">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MENÚ CONTEXTUAL INTELIGENTE (Widget o Lienzo) ===== -->
+  <div id="context-menu" class="context-menu hidden">
+    <div id="ctx-widget-group">
+      <button class="ctx-item" id="ctx-btn-config"><span class="ctx-icon">⚙</span>Configurar</button>
+      <button class="ctx-item" id="ctx-btn-dup"><span class="ctx-icon">⎘</span>Duplicar</button>
+      <button class="ctx-item ctx-danger" id="ctx-btn-del"><span class="ctx-icon">🗑</span>Eliminar</button>
+    </div>
+    <div id="ctx-canvas-group" class="hidden">
+      <div class="ctx-header">Añadir aquí</div>
+      <button class="ctx-item" id="ctx-add-fader"><span class="ctx-icon">🎚</span>Fader Vertical</button>
+      <button class="ctx-item" id="ctx-add-knob"><span class="ctx-icon">🎛</span>Knob Rotativo</button>
+      <button class="ctx-item" id="ctx-add-toggle"><span class="ctx-icon">⏻</span>Botón Toggle</button>
+      <button class="ctx-item" id="ctx-add-pad"><span class="ctx-icon">▣</span>Botón / Pad</button>
+    </div>
+  </div>
+
+  <!-- Punto de entrada modular -->
+  <script type="module" src="./js/app.js"></script>
 </body>
 </html>
