@@ -1525,110 +1525,6 @@ button {
   }
 }
 
-
-
-/* =====================================================================
-   TEMAS ESPECIALES: YAMAHA MONTAGE Y NORD STAGE
-   ===================================================================== */
-
-[data-theme="montage"] {
-  --bg-dark: #121419;
-  --bg-glow-top: #1a1e28;
-  --bg-topbar-a: #171922;
-  --bg-topbar-b: #0f1117;
-  --bg-toolbar-a: #1c202a;
-  --bg-toolbar-b: #13161d;
-  --bg-panel: rgba(18, 21, 28, 0.96);
-  --bg-modal-a: #1c202a;
-  --bg-modal-b: #12151c;
-  --bg-card: rgba(26, 31, 41, 0.82);
-  --bg-solid-card: #181c25;
-  --bg-input: #0b0d12;
-  --bg-btn: #222834;
-  --bg-btn-hover: #2d3444;
-  --bg-track: #080a0e;
-  --knob-bg: #222834;
-  --knob-cap: #151820;
-  --border: #323c50;
-  --text: #f0f4f8;
-  --muted: #8b9bb4;
-  --accent: #ff7b00; /* Naranja característico de Montage */
-  --accent-btn-a: #c25e00;
-  --accent-btn-b: #ff7b00;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-}
-
-[data-theme="nord"] {
-  --bg-dark: #8a0000; /* Rojo Clavia Nord clásico */
-  --bg-glow-top: #a30000;
-  --bg-topbar-a: #750000;
-  --bg-topbar-b: #5c0000;
-  --bg-toolbar-a: #800000;
-  --bg-toolbar-b: #660000;
-  --bg-panel: rgba(92, 0, 0, 0.96);
-  --bg-modal-a: #800000;
-  --bg-modal-b: #520000;
-  --bg-card: rgba(115, 0, 0, 0.82);
-  --bg-solid-card: #6e0000;
-  --bg-input: #420000;
-  --bg-btn: #990000;
-  --bg-btn-hover: #b80000;
-  --bg-track: #360000;
-  --knob-bg: #470000;
-  --knob-cap: #2b0000;
-  --border: #bf3030;
-  --text: #ffffff;
-  --muted: #ffcccc;
-  --accent: #ffcc00; /* Amarillo madera / panel de Nord */
-  --accent-btn-a: #cc9900;
-  --accent-btn-b: #ffcc00;
-  --success: #34d399;
-  --warning: #fbbf24;
-  --danger: #f87171;
-}
-
-/* Estilos específicos visuales para widgets en tema Yamaha Montage */
-[data-theme="montage"] .fader-track {
-  background: #090b0e;
-  border: 1px solid #ff7b00;
-  box-shadow: inset 0 0 6px rgba(255, 123, 0, 0.2);
-}
-[data-theme="montage"] .fader-thumb {
-  background: linear-gradient(180deg, #2d3444 0%, #151820 100%);
-  border: 1.5px solid #ff7b00;
-}
-[data-theme="montage"] .pad-body {
-  border-color: #ff7b00;
-  background: rgba(255, 123, 0, 0.08);
-}
-[data-theme="montage"] .pad-body.active {
-  background: #ff7b00;
-  box-shadow: 0 0 16px rgba(255, 123, 0, 0.6);
-}
-
-/* Estilos específicos visuales para widgets en tema Nord Stage */
-[data-theme="nord"] .fader-track {
-  background: #2b0000;
-  border: 1px solid #ffcc00;
-}
-[data-theme="nord"] .fader-thumb {
-  background: linear-gradient(180deg, #d4d4d4 0%, #737373 100%);
-  border: 2px solid #2b0000;
-}
-[data-theme="nord"] .pad-body {
-  border-color: #ffcc00;
-  background: rgba(255, 204, 0, 0.1);
-}
-[data-theme="nord"] .pad-body.active {
-  background: #ffcc00;
-  box-shadow: 0 0 16px rgba(255, 204, 0, 0.65);
-}
-[data-theme="nord"] .pad-body.active .pad-state-text {
-  color: #360000;
-}
-
 /* ===== LOGOTIPO INTERACTIVO Y MODAL ACERCA DE ===== */
 .brand-logo-btn {
   background: transparent;
@@ -1708,4 +1604,465 @@ button {
 .about-hyperlink:hover {
   filter: brightness(1.25);
   border-bottom-style: solid;
+}
+
+/* Ocultar marcas y elementos exclusivos de hardware en temas estándar */
+.fader-ticks.ticks-hidden,
+.fader-led-strip,
+.knob-nord-ticks,
+.knob-led-ring,
+.super-knob-group,
+.toggle-hw-led,
+.toggle-nord-oval {
+  display: none;
+}
+
+.superknob-insp-box {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(0, 85, 255, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+/* =====================================================================
+   TEMAS ESPECIALES DE HARDWARE: NORD STAGE Y YAMAHA MONTAGE
+   ===================================================================== */
+
+/* ---------- 1. NORD STAGE ---------- */
+[data-theme="nord"] {
+  --bg-dark: #4a0407;
+  --bg-glow-top: #cf1d24;
+  --bg-topbar-a: #68080c;
+  --bg-topbar-b: #470407;
+  --bg-toolbar-a: #730a0f;
+  --bg-toolbar-b: #540609;
+  --bg-panel: rgba(68, 7, 10, 0.96);
+  --bg-modal-a: #6e0a0e;
+  --bg-modal-b: #450508;
+  --bg-card: rgba(79, 95, 112, 0.95);
+  --bg-solid-card: #4b5a6a;
+  --bg-input: #360406;
+  --bg-btn: #7d0d12;
+  --bg-btn-hover: #991117;
+  --bg-track: #0c0f13;
+  --knob-bg: #26303a;
+  --knob-cap: #14171c;
+  --border: #a3262c;
+  --text: #ffffff;
+  --muted: #f2cfd1;
+  --accent: #fefffe;
+  --accent-btn-a: #9e1118;
+  --accent-btn-b: #c81922;
+  --success: #00fa1d;
+  --warning: #fbbf24;
+  --danger: #ff6b6b;
+}
+
+[data-theme="nord"] body {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(35, 0, 0, 0.07) 0px,
+      rgba(35, 0, 0, 0.07) 2px,
+      transparent 2px,
+      transparent 10px
+    ),
+    radial-gradient(ellipse at 50% 54%, #dc242a 0%, #9e0e14 48%, #420306 100%);
+}
+
+[data-theme="nord"] .osc-widget[data-type="fader"]:not(.style-minimal),
+[data-theme="nord"] .osc-widget[data-type="knob"]:not(.style-minimal) {
+  background: linear-gradient(180deg, #596a7c 0%, #485767 100%);
+  border: 1.5px solid #313d49;
+  backdrop-filter: none;
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+[data-theme="nord"] .osc-widget[data-type="toggle"]:not(.style-minimal),
+[data-theme="nord"] .osc-widget[data-type="pad"]:not(.style-minimal) {
+  background: rgba(55, 4, 7, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: none;
+}
+
+[data-theme="nord"] .fader-ticks {
+  display: block !important;
+  inset: 12px 12%;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(241, 245, 249, 0.52) 0px,
+    rgba(241, 245, 249, 0.52) 1.5px,
+    transparent 1.5px,
+    transparent 10%
+  );
+}
+
+/* Knobs Nord Stage: sin borde luminoso, con líneas radiales intercaladas */
+[data-theme="nord"] .knob-arc-bg,
+[data-theme="nord"] .knob-arc-fill {
+  display: none !important;
+}
+
+[data-theme="nord"] .knob-nord-ticks {
+  display: block;
+}
+
+[data-theme="nord"] .nord-tick-major {
+  stroke: rgba(248, 250, 252, 0.92);
+  stroke-width: 1.9;
+  stroke-linecap: round;
+}
+
+[data-theme="nord"] .nord-tick-minor {
+  stroke: rgba(226, 232, 240, 0.55);
+  stroke-width: 1.25;
+  stroke-linecap: round;
+}
+
+[data-theme="nord"] .knob-pointer {
+  stroke: var(--w-color);
+  stroke-width: 3;
+  filter: none;
+}
+
+/* Botones Nord Stage: sin texto interior, conservando únicamente el título superior */
+[data-theme="nord"] .pad-body.toggle-pad {
+  position: relative;
+  border-radius: 4px;
+  border: 2px solid #060709;
+  background: linear-gradient(180deg, #24282e 0%, #121418 100%);
+  box-shadow:
+    0 5px 10px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+[data-theme="nord"] .pad-body.toggle-pad.active {
+  background: linear-gradient(180deg, #171a1f 0%, #0d0f12 100%);
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.75),
+    inset 0 2px 5px rgba(0, 0, 0, 0.65);
+}
+
+[data-theme="nord"] .pad-body.toggle-pad .pad-state-text {
+  display: none !important;
+}
+
+[data-theme="nord"] .toggle-nord-oval {
+  display: block;
+  position: absolute;
+  width: 68%;
+  height: 44%;
+  max-width: 84px;
+  max-height: 38px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #0b0d10 0%, #1b1f25 55%, #272c34 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.85),
+    0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+[data-theme="nord"] .toggle-hw-led {
+  display: block;
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #2b1414;
+  border: 1px solid #090a0d;
+}
+
+[data-theme="nord"] .pad-body.toggle-pad.active .toggle-hw-led {
+  background: var(--w-color);
+  box-shadow: 0 0 8px var(--w-color);
+}
+
+
+/* ---------- 2. YAMAHA MONTAGE ---------- */
+[data-theme="montage"] {
+  --bg-dark: #07080b;
+  --bg-glow-top: #282d37;
+  --bg-topbar-a: #14171d;
+  --bg-topbar-b: #0b0d11;
+  --bg-toolbar-a: #191d24;
+  --bg-toolbar-b: #101318;
+  --bg-panel: rgba(15, 18, 24, 0.96);
+  --bg-modal-a: #1a1e26;
+  --bg-modal-b: #0f1217;
+  --bg-card: rgba(18, 21, 27, 0.72);
+  --bg-solid-card: #12151b;
+  --bg-input: #090b0f;
+  --bg-btn: #1d222c;
+  --bg-btn-hover: #282f3d;
+  --bg-track: #050608;
+  --knob-bg: #0c0e13;
+  --knob-cap: #161920;
+  --border: #2a313f;
+  --text: #f1f5f9;
+  --muted: #8e9aaf;
+  --accent: #008cff;
+  --accent-btn-a: #0b87b8;
+  --accent-btn-b: #00a2ff;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ff0000;
+}
+
+[data-theme="montage"] body {
+  background: radial-gradient(ellipse at 50% 52%, #2c313c 0%, #15181f 52%, #060709 100%);
+}
+
+[data-theme="montage"] .osc-widget[data-type="fader"]:not(.style-minimal),
+[data-theme="montage"] .osc-widget[data-type="knob"]:not(.style-minimal),
+[data-theme="montage"] .osc-widget[data-type="toggle"]:not(.style-minimal),
+[data-theme="montage"] .osc-widget[data-type="pad"]:not(.style-minimal) {
+  background: rgba(16, 19, 24, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: none;
+}
+
+[data-theme="montage"] .fader-ticks {
+  display: none !important;
+}
+
+/* Knobs estándar Montage: anillo curvo de LEDs cuadrados intercalados en rojo */
+[data-theme="montage"] .knob-arc-bg,
+[data-theme="montage"] .knob-arc-fill {
+  display: none !important;
+}
+
+[data-theme="montage"] .osc-widget:not(.is-super-knob) .knob-led-ring {
+  display: block;
+}
+
+[data-theme="montage"] .knob-led-seg {
+  fill: rgba(28, 16, 18, 0.92);
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 0.6;
+}
+
+[data-theme="montage"] .knob-led-seg.lit {
+  fill: var(--w-color);
+  stroke: color-mix(in srgb, var(--w-color) 65%, #ffffff);
+  filter: drop-shadow(0 0 3.2px var(--w-color));
+}
+
+[data-theme="montage"] .osc-widget:not(.is-super-knob) .knob-pointer {
+  stroke: rgba(248, 250, 252, 0.85);
+  stroke-width: 2.8;
+  filter: none;
+}
+
+/* Super Knob exclusivo de Yamaha Montage: centro negro + orillas azul rey neón sin tira */
+[data-theme="montage"] .osc-widget.is-super-knob .knob-led-ring,
+[data-theme="montage"] .osc-widget.is-super-knob .knob-cap,
+[data-theme="montage"] .osc-widget.is-super-knob .knob-pointer {
+  display: none !important;
+}
+
+[data-theme="montage"] .osc-widget.is-super-knob .super-knob-group {
+  display: block;
+}
+
+[data-theme="montage"] .sk-halo {
+  fill: none;
+  stroke: var(--w-color);
+  stroke-width: 15;
+  opacity: calc(var(--sk-norm, 0) * 0.55);
+  filter: blur(5px);
+}
+
+[data-theme="montage"] .sk-rim {
+  fill: none;
+  stroke: var(--w-color);
+  stroke-width: 13.5;
+  opacity: var(--sk-intensity, 0.25);
+  filter: drop-shadow(0 0 var(--sk-glow-px, 4px) var(--w-color));
+}
+
+[data-theme="montage"] .sk-rim-core {
+  visibility: hidden;
+  fill: none;
+  stroke: color-mix(in srgb, var(--w-color) 42%, #ffffff);
+  stroke-width: 4;
+  opacity: var(--sk-core-opacity, 0);
+}
+
+[data-theme="montage"] .sk-black-center {
+  stroke: #040507;
+  stroke-width: 2.2;
+}
+
+[data-theme="montage"] .sk-cap-notch {
+  stroke: rgba(255, 255, 255, 0.26);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+
+/* Botones Yamaha Montage: bordes negros y centro naranja #ff5900 */
+[data-theme="montage"] .pad-body.toggle-pad {
+  border-radius: 7px;
+  border: 4.5px solid #07080a;
+  outline: 1px solid #252b36;
+  background: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in srgb, var(--w-color) 46%, #1d2129) 0%,
+    color-mix(in srgb, var(--w-color) 26%, #101318) 100%
+  );
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.7),
+    inset 0 2px 5px rgba(0, 0, 0, 0.65);
+}
+
+[data-theme="montage"] .pad-body.toggle-pad.active {
+  border: 4.5px solid #07080a;
+  background: radial-gradient(
+    circle at 50% 42%,
+    color-mix(in srgb, var(--w-color) 74%, #ffffff) 0%,
+    var(--w-color) 65%,
+    color-mix(in srgb, var(--w-color) 82%, #000000) 100%
+  );
+  box-shadow:
+    0 0 var(--w-glow) var(--w-color),
+    inset 0 1px 3px rgba(255, 255, 255, 0.6);
+}
+
+[data-theme="montage"] .pad-body.toggle-pad .pad-state-text {
+
+  visibility: hidden;
+}
+
+[data-theme="montage"] .pad-body.toggle-pad.active .pad-state-text {
+  visibility: hidden;
+}
+
+
+/* ---------- 3. FADERS, KNOB CAP Y PADS COMPARTIDOS (NORD & MONTAGE) ---------- */
+[data-theme="nord"] .fader-body,
+[data-theme="montage"] .fader-body {
+  gap: 16px;
+  margin: 14px 0;
+}
+
+[data-theme="nord"] .fader-fill,
+[data-theme="montage"] .fader-fill {
+  display: none !important;
+}
+
+[data-theme="nord"] .fader-track,
+[data-theme="montage"] .fader-track {
+  width: 7px;
+  background: #07090c;
+  border: 1px solid #222933;
+  border-radius: 3px;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.9);
+  z-index: 3;
+}
+
+[data-theme="nord"] .fader-thumb,
+[data-theme="montage"] .fader-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 3px;
+  background: linear-gradient(
+    180deg,
+    #2e333b 0%,
+    #15181d 45%,
+    #07080a 55%,
+    #1f232a 100%
+  );
+  border: 1.5px solid #050608;
+  box-shadow:
+    0 5px 10px rgba(0, 0, 0, 0.78),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+[data-theme="nord"] .fader-thumb::after {
+  left: 4px;
+  right: 4px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.82);
+}
+
+[data-theme="montage"] .fader-thumb::after {
+  left: 4px;
+  right: 4px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+[data-theme="nord"] .fader-led-strip,
+[data-theme="montage"] .fader-led-strip {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2px;
+  height: 100%;
+  padding: 3px;
+  background: rgba(6, 8, 11, 0.65);
+  border: 1px solid rgba(0, 0, 0, 0.75);
+  border-radius: 4px;
+  z-index: 3;
+}
+
+.fader-led-seg {
+  flex: 1;
+  width: 7px;
+  max-height: 7px;
+  min-height: 2.5px;
+  border-radius: 1.2px;
+  background: rgba(24, 29, 36, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.fader-led-seg.lit {
+  background: var(--w-color);
+  border-color: color-mix(in srgb, var(--w-color) 65%, #ffffff);
+  box-shadow:
+    0 0 6px var(--w-color),
+    0 0 calc(var(--w-glow) * 0.4) var(--w-color);
+}
+
+[data-theme="nord"] .knob-cap,
+[data-theme="montage"] .knob-cap {
+  fill: var(--knob-lit-fill) !important;
+  stroke: #090b0e;
+  stroke-width: 3.2;
+}
+
+[data-theme="nord"] .osc-widget[data-type="pad"] .pad-body,
+[data-theme="montage"] .osc-widget[data-type="pad"] .pad-body {
+  border-radius: 8px;
+  border: 2.5px solid #0c0e12;
+  background: radial-gradient(
+    circle at 50% 36%,
+    color-mix(in srgb, var(--w-color) 96%, #ffffff) 0%,
+    color-mix(in srgb, var(--w-color) 84%, #94a3b8) 66%,
+    color-mix(in srgb, var(--w-color) 66%, #334155) 100%
+  );
+  box-shadow:
+    0 5px 12px rgba(0, 0, 0, 0.58),
+    inset 0 2px 3px rgba(255, 255, 255, 0.78),
+    inset 0 -5px 9px rgba(0, 0, 0, 0.28);
+}
+
+[data-theme="nord"] .osc-widget[data-type="pad"] .pad-body.active,
+[data-theme="montage"] .osc-widget[data-type="pad"] .pad-body.active {
+  transform: scale(0.98);
+  background: radial-gradient(
+    circle at 50% 50%,
+    #ffffff 0%,
+    var(--w-color) 78%
+  );
+  box-shadow:
+    0 0 var(--w-glow) var(--w-color),
+    inset 0 1px 4px rgba(255, 255, 255, 0.9);
 }

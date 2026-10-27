@@ -246,6 +246,10 @@ async function init() {
       $('modal-midi').classList.add('hidden');
       $('modal-scenes').classList.add('hidden');
       $('modal-dialog').classList.add('hidden');
+      $('modal-about')?.addEventListener('click', (e) => {
+        if (e.target.id === 'modal-about') $('modal-about').classList.add('hidden');
+      });
+      $('modal-about')?.classList.add('hidden');
     }
     if (e.key === 'Delete' && state.selectedWidgetId && state.editMode) {
       const page = getActivePage();

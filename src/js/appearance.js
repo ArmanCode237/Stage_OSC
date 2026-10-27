@@ -1,4 +1,6 @@
-import { state, $, getActivePage, scheduleSave } from './state.js';
+import { state, $, getActivePage, getSelectedWidget, scheduleSave } from './state.js';
+import { updateWidgetVisuals } from './widgets.js';
+import { openInspector } from './inspector.js';
 
 export const THEMES = [
   { id: 'cyber', name: 'Cyber Cyan', previewBg: '#090c12', previewCard: '#161d2c', accent: '#00e5ff' },
@@ -7,8 +9,8 @@ export const THEMES = [
   { id: 'crimson', name: 'Escenario Rojo', previewBg: '#11070a', previewCard: '#221017', accent: '#ff4d6d' },
   { id: 'emerald', name: 'Synth Esmeralda', previewBg: '#06120f', previewCard: '#0f241f', accent: '#10b981' },
   { id: 'light', name: 'Modo Claro', previewBg: '#e8eef5', previewCard: '#ffffff', accent: '#0284c7' },
-  { id: 'montage', name: 'Yamaha Montage', previewBg: '#16181d', previewCard: '#20242c', accent: '#ff7b00' },
-  { id: 'nord', name: 'Nord Stage', previewBg: '#990000', previewCard: '#b30000', accent: '#ffcc00' }
+  { id: 'montage', name: 'Yamaha Montage', previewBg: '#0a0c10', previewCard: '#1d222b', accent: '#ff5900' },
+  { id: 'nord', name: 'Nord Stage', previewBg: '#7a090d', previewCard: '#4f5f70', accent: '#00fa1d' }
 ];
 
 export function clampZoom(val, min = 0.5, max = 1.75) {
@@ -30,6 +32,13 @@ export function applyAppearance() {
   const canvasArea = $('canvas-area');
   if (canvasArea) {
     canvasArea.classList.toggle('allow-scroll', allowScroll);
+  }
+
+  getActivePage().widgets.forEach((w) => updateWidgetVisuals(w));
+
+  if (state.inspectorOpen) {
+    const sel = getSelectedWidget();
+    if (sel) openInspector(sel);
   }
 
   updateStageBounds();

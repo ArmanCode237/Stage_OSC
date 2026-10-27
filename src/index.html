@@ -112,6 +112,20 @@
               <option value="pad">Botón / Pad (Disparo)</option>
             </select>
           </label>
+
+          <!-- Opción exclusiva para Knobs dentro del tema Yamaha Montage -->
+          <div id="group-montage-superknob" class="superknob-insp-box hidden">
+            <label class="check-row">
+              <input type="checkbox" id="inp-super-knob" />
+              <span>Modo <strong>Super Knob</strong></span>
+            </label>
+            <label class="check-row hidden" id="row-super-knob-blink">
+              <input type="checkbox" id="inp-super-knob-blink" />
+              <span>Parpadeo dinámico según recorrido</span>
+            </label>
+          </div>
+
+
           <div id="group-toggle-texts" class="row-2col hidden">
             <label><span>Texto ON</span><input type="text" id="inp-on-label" maxlength="12" placeholder="Vacío = sin texto" /></label>
             <label><span>Texto OFF</span><input type="text" id="inp-off-label" maxlength="12" placeholder="Vacío = sin texto" /></label>
@@ -184,6 +198,7 @@
           <div class="color-row">
             <input type="color" id="inp-color" value="#00e5ff" />
             <div id="color-swatches"></div>
+            <button type="button" id="btn-reset-color" class="btn-mini hover-bright" title="Restaurar color original del tema">↺</button>
           </div>
           <div class="row-2col">
             <label>
@@ -444,7 +459,7 @@
   <div id="modal-about" class="modal-backdrop hidden">
     <div class="modal-card">
       <div class="modal-header-flex">
-        <h3>Acerca de Stage OSC</h3>
+        <h3>Acerca de OSC stage</h3>
         <button id="btn-x-about" class="icon-btn hover-bright">✕</button>
       </div>
 
@@ -452,22 +467,24 @@
         <div class="about-logo-wrap">
           <img src="./assets/icon.png" alt="Stage OSC Logo" class="about-app-logo" />
         </div>
-        <h4 class="about-title">Stage OSC Controller Pro</h4>
+        <h4 class="about-title">OSC stage</h4>
         <p class="about-desc">
-          Aplicación profesional de control remoto OSC y MIDI de ultra baja latencia diseñada para músicos de directo, ingenieros de audio y creadores de contenido.
+          Aplicación de control remoto OSC y midi, diseñada de músicos para músicos.
         </p>
         <div class="insp-section about-credits">
           <h4>Agradecimientos y Créditos</h4>
           <p>
-            Desarrollado con pasión para la comunidad de producción musical en directo. Un agradecimiento especial a todos los colaboradores, probadores beta y a la comunidad de REAPER.
+            Está aplicación está realizada para todos aquellos músicos que en algún momento han necesitado de un control remoto para su DAW en presentaciones en vivo, aún estamos en etapa de desarrollo, sin embargo, les proporcionamos esta versión alpha para que puedan usarla y divertirse.
           </p>
           <div class="about-link-wrap">
             <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="about-hyperlink">
-              Visitar Repositorio Oficial y Documentación
+              Visitanos
             </a>
           </div>
         </div>
       </div>
+
+      <span style="font-size:11px;color:var(--muted)">Tu <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="about-hyperlink" >donación</a> nos ayuda a seguir mejorando nuestros productos.</span>
 
       <div class="modal-footer">
         <span style="font-size:11px;color:var(--muted)">Versión 1.0.0 Alpha</span>

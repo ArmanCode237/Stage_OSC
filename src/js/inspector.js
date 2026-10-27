@@ -1,6 +1,6 @@
 import { SWATCH_COLORS, CC_NAMES, midiNoteToName, uid } from './constants.js';
 import { state, $, getActivePage, getSelectedWidget, scheduleSave } from './state.js';
-import { updateWidgetVisuals, rerenderSingleWidget } from './widgets.js';
+import { getEffectiveWidgetColor, updateWidgetVisuals, rerenderSingleWidget } from './widgets.js';
 
 export function showDialog({ title, defaultValue = '', isPrompt = true, message = '' }) {
   return new Promise((resolve) => {
@@ -59,6 +59,38 @@ function refreshSubtitle(widget) {
   $('inspector-title').textContent = widget.label || 'Control';
 }
 
+function assignColorForActiveTheme(widget, hexColor) {
+  const theme = state.config?.appearance?.theme || 'cyber';
+  if (!widget.themeColors) widget.themeColors = {};
+
+  if (theme === 'nord') {
+    widget.themeColors.nord = hexColor;
+  } else if (theme === 'montage') {
+    if (widget.type === 'knob' && widget.superKnob) {
+      widget.themeColors.montageSuper = hexColor;
+    } else {
+      widget.themeColors.montage = hexColor;
+    }
+  } else {
+    widget.color = hexColor;
+  }
+}
+
+function resetColorForActiveTheme(widget) {
+  const theme = state.config?.appearance?.theme || 'cyber';
+  if (theme === 'nord' && widget.themeColors) {
+    delete widget.themeColors.nord;
+  } else if (theme === 'montage' && widget.themeColors) {
+    if (widget.type === 'knob' && widget.superKnob) {
+      delete widget.themeColors.montageSuper;
+    } else {
+      delete widget.themeColors.montage;
+    }
+  } else {
+    widget.color = '#00e5ff';
+  }
+}
+
 export function syncInspectorGeometry(widget) {
   if (!state.inspectorOpen || state.selectedWidgetId !== widget.id) return;
   $('inp-x').value = widget.x;
@@ -71,6 +103,7 @@ export function openInspector(widget) {
   state.selectedWidgetId = widget.id;
   state.inspectorOpen = true;
 
+  const theme = state.config?.appearance?.theme || 'cyber';
   const zoom = state.config?.appearance?.canvasZoom || 1;
   const uiScale = state.config?.appearance?.uiScale || 1;
   const inspMargin = 350 * uiScale;
@@ -87,6 +120,7 @@ export function openInspector(widget) {
 
   const isToggle = widget.type === 'toggle';
   const isPad = widget.type === 'pad';
+  const isKnob = widget.type === 'knob';
 
   refreshSubtitle(widget);
 
@@ -102,7 +136,7 @@ export function openInspector(widget) {
   $('inp-osc-type').value = widget.oscType || 'f';
   $('inp-min').value = widget.min ?? 0;
   $('inp-max').value = widget.max ?? 127;
-  $('inp-color').value = widget.color || '#00e5ff';
+  $('inp-color').value = getEffectiveWidgetColor(widget);
   $('inp-glow').value = widget.glow || 'neon';
   $('inp-style').value = widget.style || 'glass';
   $('inp-show-ticks').checked = Boolean(widget.showTicks);
@@ -110,8 +144,18 @@ export function openInspector(widget) {
   $('inp-spring').checked = Boolean(widget.spring);
   syncInspectorGeometry(widget);
 
-  $('group-toggle-texts').classList.toggle('hidden', !isToggle);
-  $('row-show-ticks').classList.toggle('hidden', isToggle || isPad);
+  // Opción exclusiva Super Knob (únicamente para Knobs dentro del tema Yamaha Montage)
+  const showSuperKnobOpt = theme === 'montage' && isKnob;
+  if ($('group-montage-superknob')) {
+    $('group-montage-superknob').classList.toggle('hidden', !showSuperKnobOpt);
+    $('inp-super-knob').checked = Boolean(widget.superKnob);
+    $('inp-super-knob-blink').checked = Boolean(widget.superKnobBlink);
+    $('row-super-knob-blink').classList.toggle('hidden', !widget.superKnob);
+  }
+
+  // En Nord Stage los botones no llevan texto interior
+  $('group-toggle-texts').classList.toggle('hidden', !isToggle || theme === 'nord');
+  $('row-show-ticks').classList.toggle('hidden', isToggle || isPad || theme === 'nord' || theme === 'montage');
   $('row-spring').classList.toggle('hidden', isToggle);
   $('lbl-min-val').textContent = isToggle ? 'Valor OFF (Mín)' : 'Valor Mín';
   $('lbl-max-val').textContent = isToggle ? 'Valor ON (Máx)' : 'Valor Máx';
@@ -153,13 +197,46 @@ export function bindInspectorInputs(widgetCallbacks, onFullRender) {
     s.onclick = () => {
       const w = getSelectedWidget();
       if (!w) return;
-      w.color = col;
+      assignColorForActiveTheme(w, col);
       $('inp-color').value = col;
       updateWidgetVisuals(w);
       scheduleSave();
     };
     swatchBox.appendChild(s);
   });
+
+  if ($('btn-reset-color')) {
+    $('btn-reset-color').onclick = () => {
+      const w = getSelectedWidget();
+      if (!w) return;
+      resetColorForActiveTheme(w);
+      $('inp-color').value = getEffectiveWidgetColor(w);
+      updateWidgetVisuals(w);
+      scheduleSave();
+    };
+  }
+
+  if ($('inp-super-knob')) {
+    $('inp-super-knob').onchange = (e) => {
+      const w = getSelectedWidget();
+      if (!w) return;
+      w.superKnob = e.target.checked;
+      $('row-super-knob-blink').classList.toggle('hidden', !w.superKnob);
+      $('inp-color').value = getEffectiveWidgetColor(w);
+      updateWidgetVisuals(w);
+      scheduleSave();
+    };
+  }
+
+  if ($('inp-super-knob-blink')) {
+    $('inp-super-knob-blink').onchange = (e) => {
+      const w = getSelectedWidget();
+      if (!w) return;
+      w.superKnobBlink = e.target.checked;
+      updateWidgetVisuals(w);
+      scheduleSave();
+    };
+  }
 
   $('btn-inspector-side').onclick = () => {
     state.inspectorDockLeft = !state.inspectorDockLeft;
@@ -297,7 +374,7 @@ export function bindInspectorInputs(widgetCallbacks, onFullRender) {
   $('inp-color').oninput = (e) => {
     const w = getSelectedWidget();
     if (!w) return;
-    w.color = e.target.value;
+    assignColorForActiveTheme(w, e.target.value);
     updateWidgetVisuals(w);
     scheduleSave();
   };
