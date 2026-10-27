@@ -14,7 +14,7 @@
   },
   "build": {
     "appId": "com.freeosc.studio",
-    "productName": "Stage OSC",
+    "productName": "OSC Stage",
     "electronDist": "node_modules/electron/dist",
     "files": [
       "main.js",

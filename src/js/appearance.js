@@ -9,8 +9,8 @@ export const THEMES = [
   { id: 'crimson', name: 'Escenario Rojo', previewBg: '#11070a', previewCard: '#221017', accent: '#ff4d6d' },
   { id: 'emerald', name: 'Synth Esmeralda', previewBg: '#06120f', previewCard: '#0f241f', accent: '#10b981' },
   { id: 'light', name: 'Modo Claro', previewBg: '#e8eef5', previewCard: '#ffffff', accent: '#0284c7' },
-  { id: 'montage', name: 'Yamaha Montage', previewBg: '#0a0c10', previewCard: '#1d222b', accent: '#ff5900' },
-  { id: 'nord', name: 'Nord Stage', previewBg: '#7a090d', previewCard: '#4f5f70', accent: '#00fa1d' }
+  { id: 'montage', name: 'Yamaha Montage', previewBg: '#0a0c10', previewCard: '#1d222b', accent: '#0099ff' },
+  { id: 'nord', name: 'Nord Stage', previewBg: '#7a090d', previewCard: '#4f5f70', accent: '#ffffff' }
 ];
 
 export function clampZoom(val, min = 0.5, max = 1.75) {

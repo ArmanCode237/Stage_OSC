@@ -103,5 +103,15 @@ export const platform = {
       return res?.ips || [];
     }
     return ['Modo Web'];
-  }
+  },
+
+  openExternal(url) {
+    if (!url) return;
+    if (window.oscAPI?.openExternal) {
+      window.oscAPI.openExternal(url);
+    } else {
+      // En Android (Capacitor), window.open con '_system' delega el Intent al navegador móvil predeterminado
+      window.open(url, '_system', 'noopener,noreferrer');
+    }
+  },
 };

@@ -1678,9 +1678,6 @@ button {
   background: linear-gradient(180deg, #596a7c 0%, #485767 100%);
   border: 1.5px solid #313d49;
   backdrop-filter: none;
-  box-shadow:
-    0 6px 16px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.22);
 }
 
 [data-theme="nord"] .osc-widget[data-type="toggle"]:not(.style-minimal),

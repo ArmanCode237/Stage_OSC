@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, session } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, session, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const dgram = require('dgram');
@@ -173,6 +173,22 @@ function createWindow() {
   });
 
   mainWindow.loadFile(path.join(__dirname, 'src', 'index.html'));
+
+  // 1. Si una etiqueta <a> tiene target="_blank", abrir en el navegador del sistema
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('mailto:')) {
+      shell.openExternal(url);
+    }
+    return { action: 'deny' }; // Evita que Electron abra una ventana nueva en blanco
+  });
+
+  // 2. Si una etiqueta <a> NO tiene target="_blank", evitar que reemplace la interfaz de Stage OSC
+  mainWindow.webContents.on('will-navigate', (event, url) => {
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('mailto:')) {
+      event.preventDefault();
+      shell.openExternal(url);
+    }
+  });
 }
 
 ipcMain.on('osc:send', (_event, payload) => {
@@ -250,6 +266,12 @@ ipcMain.handle('app:get-ips', () => {
     }
   }
   return results;
+});
+
+ipcMain.handle('app:open-external', (_event, url) => {
+  if (typeof url === 'string' && /^(https?:|mailto:)/i.test(url)) {
+    return shell.openExternal(url);
+  }
 });
 
 // 2. Al final de main.js, reemplaza app.whenReady().then(createWindow); por esto:

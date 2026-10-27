@@ -189,6 +189,16 @@ async function init() {
   }
 
   document.addEventListener('click', (e) => {
+    const link = e.target.closest('a[href]');
+    if (!link) return;
+    const href = link.getAttribute('href') || '';
+    if (/^(https?:|mailto:)/i.test(href)) {
+      e.preventDefault();
+      platform.openExternal(href);
+    }
+  });
+
+  document.addEventListener('click', (e) => {
     $('context-menu').classList.add('hidden');
     if (!e.target.closest('.sys-menu-wrap')) {
       $('system-dropdown').classList.add('hidden');

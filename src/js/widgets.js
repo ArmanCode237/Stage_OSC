@@ -2,9 +2,9 @@ import { SWATCH_COLORS, uid } from './constants.js';
 import { state, scheduleSave } from './state.js';
 import { formatWidgetReadout, dispatchWidgetMessage } from './midiRouter.js';
 
-const FADER_LED_COUNT = 16;
+const FADER_LED_COUNT = 20;
 const KNOB_LED_COUNT = 15;
-const NORD_TICK_COUNT = 21;
+const NORD_TICK_COUNT = 26;
 
 export function snapVal(v) {
   return state.snapToGrid ? Math.round(v / 20) * 20 : Math.round(v);

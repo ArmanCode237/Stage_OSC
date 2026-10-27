@@ -7,5 +7,6 @@ contextBridge.exposeInMainWorld('oscAPI', {
   exportConfig: (jsonStr) => ipcRenderer.invoke('config:export', jsonStr),
   importConfig: () => ipcRenderer.invoke('config:import'),
   toggleFullscreen: () => ipcRenderer.invoke('app:toggle-fullscreen'),
-  getLocalIPs: () => ipcRenderer.invoke('app:get-ips')
+  getLocalIPs: () => ipcRenderer.invoke('app:get-ips'),
+  openExternal: (url) => ipcRenderer.invoke('app:open-external', url)
 });
